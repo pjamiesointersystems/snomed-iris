@@ -1,0 +1,31 @@
+services:
+  iris:
+    build: .
+    container_name: snomed-iris
+    ports:
+      - "1972:1972"
+      - "52773:52773"
+    volumes:
+      - iris-data:/usr/irissys/mgr
+    environment:
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      ollama:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "iris", "qlist", "IRIS"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+
+volumes:
+  iris-data:
+  ollama-data:

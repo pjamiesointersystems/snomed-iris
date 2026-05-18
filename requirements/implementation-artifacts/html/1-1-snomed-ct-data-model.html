@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>1-1-snomed-ct-data-model</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">1-1-snomed-ct-data-model</h1>
+</header>
+<h1 id="story-1.1-snomed-ct-data-model">Story 1.1: SNOMED CT Data
+Model</h1>
+<p>Status: review</p>
+<h2 id="story">Story</h2>
+<p>As a developer, I want persistent classes for SNOMED CT concepts,
+descriptions, and relationships with appropriate indexes, so that RF2
+data can be stored and queried via SQL.</p>
+<h2 id="acceptance-criteria">Acceptance Criteria</h2>
+<ol type="1">
+<li>SQL tables <code>SNOMED.Concept</code>,
+<code>SNOMED.Description</code>, and <code>SNOMED.Relationship</code>
+exist after class compilation</li>
+<li><code>SNOMED.Concept</code> has properties: ConceptId (string,
+unique indexed), Active (boolean), EffectiveTime (string), ModuleId
+(string), DefinitionStatusId (string)</li>
+<li><code>SNOMED.Description</code> has properties: DescriptionId
+(string, unique indexed), ConceptId (indexed), Term (string, max 1024),
+TypeId (string), Active (boolean), LanguageCode (string)</li>
+<li><code>SNOMED.Relationship</code> has properties: RelationshipId
+(string, unique indexed), SourceId (indexed), DestinationId (indexed),
+TypeId (indexed), Active (boolean), RelationshipGroup (integer)</li>
+<li>All SCTID fields (ConceptId, DescriptionId, RelationshipId,
+SourceId, DestinationId, TypeId, ModuleId, DefinitionStatusId) are
+stored as <code>%String</code> — never numeric</li>
+<li>Classes compile cleanly and SQL tables are queryable via
+<code>SELECT * FROM SNOMED.Concept</code> etc.</li>
+</ol>
+<h2 id="tasks-subtasks">Tasks / Subtasks</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Task 1: Create
+<code>SNOMED.Concept</code> persistent class (AC: #1, #2, #5)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Define class extending
+<code>%Persistent</code></label></li>
+<li><label><input type="checkbox" checked="" />Add all properties with
+correct types</label></li>
+<li><label><input type="checkbox" checked="" />Add unique index on
+ConceptId</label></li>
+<li><label><input type="checkbox" checked="" />Add bitmap index on
+Active for filtering</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 2: Create
+<code>SNOMED.Description</code> persistent class (AC: #1, #3,
+#5)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Define class extending
+<code>%Persistent</code></label></li>
+<li><label><input type="checkbox" checked="" />Add all properties with
+correct types (Term MAXLEN=1024)</label></li>
+<li><label><input type="checkbox" checked="" />Add unique index on
+DescriptionId</label></li>
+<li><label><input type="checkbox" checked="" />Add index on ConceptId
+for joins</label></li>
+<li><label><input type="checkbox" checked="" />Add index on TypeId for
+filtering by FSN/Synonym/Definition</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 3: Create
+<code>SNOMED.Relationship</code> persistent class (AC: #1, #4,
+#5)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Define class extending
+<code>%Persistent</code></label></li>
+<li><label><input type="checkbox" checked="" />Add all properties with
+correct types</label></li>
+<li><label><input type="checkbox" checked="" />Add unique index on
+RelationshipId</label></li>
+<li><label><input type="checkbox" checked="" />Add indexes on SourceId,
+DestinationId, TypeId</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 4: Verify
+compilation and SQL access (AC: #6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Compile all three
+classes</label></li>
+<li><label><input type="checkbox" checked="" />Verify SQL tables exist
+via Management Portal or <code>iris session</code></label></li>
+<li><label><input type="checkbox" checked="" />Run sample SELECT queries
+against each table</label></li>
+</ul></li>
+</ul>
+<h2 id="dev-notes">Dev Notes</h2>
+<h3 id="architecture-pattern">Architecture Pattern</h3>
+<p>This is a <strong>greenfield IRIS project</strong>
+(<code>snomed-iris</code>). These are the first classes being created.
+Follow the package structure from the research report:</p>
+<pre><code>src/
+  SNOMED/
+    Concept.cls
+    Description.cls
+    Relationship.cls</code></pre>
+<h3 id="critical-implementation-rules">Critical Implementation
+Rules</h3>
+<ul>
+<li><strong>SCTIDs are STRINGS, not numbers.</strong> SNOMED concept IDs
+like <code>138875005</code> look numeric but can exceed integer limits
+and must preserve leading zeros in some contexts. Always use
+<code>%String</code>.</li>
+<li><strong>EffectiveTime is a STRING</strong> in RF2 format
+(<code>YYYYMMDD</code>). Store as <code>%String(MAXLEN=8)</code>, not
+<code>%Date</code>.</li>
+<li><strong>TypeId fields are SCTIDs</strong> referencing other concepts
+(e.g., <code>116680003</code> = IS-A relationship type,
+<code>900000000000003001</code> = FSN type). Store as
+<code>%String</code>.</li>
+<li><strong>No <code>%New()</code>/<code>%Save()</code> pattern for bulk
+loading</strong> — Story 1.2 will use SQL prepared statements for
+performance. These classes just define the schema.</li>
+<li><strong>Property MAXLEN matters</strong> — <code>Term</code> in
+descriptions can be very long (up to ~1000 chars for some FSNs). Use
+<code>MAXLEN = 1024</code>.</li>
+</ul>
+<h3 id="objectscript-class-syntax-reference">ObjectScript Class Syntax
+Reference</h3>
+<pre class="objectscript"><code>Class SNOMED.Concept Extends %Persistent
+{
+
+Property ConceptId As %String(MAXLEN = 20) [ Required ];
+
+Property Active As %Boolean;
+
+Property EffectiveTime As %String(MAXLEN = 8);
+
+Property ModuleId As %String(MAXLEN = 20);
+
+Property DefinitionStatusId As %String(MAXLEN = 20);
+
+Index ConceptIdIdx On ConceptId [ Unique ];
+
+Index ActiveIdx On Active [ Type = bitmap ];
+
+}</code></pre>
+<h3 id="index-strategy">Index Strategy</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 24%" />
+<col style="width: 20%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr>
+<th>Table</th>
+<th>Index</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Concept</td>
+<td>ConceptIdIdx</td>
+<td>Unique</td>
+<td>O(1) lookup by SCTID</td>
+</tr>
+<tr>
+<td>Concept</td>
+<td>ActiveIdx</td>
+<td>Bitmap</td>
+<td>Fast filtering of active concepts</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>DescriptionIdIdx</td>
+<td>Unique</td>
+<td>O(1) lookup</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>ConceptIdIdx</td>
+<td>Standard</td>
+<td>Join to Concept table</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>TypeIdIdx</td>
+<td>Standard</td>
+<td>Filter FSN vs Synonym</td>
+</tr>
+<tr>
+<td>Relationship</td>
+<td>RelationshipIdIdx</td>
+<td>Unique</td>
+<td>O(1) lookup</td>
+</tr>
+<tr>
+<td>Relationship</td>
+<td>SourceIdIdx</td>
+<td>Standard</td>
+<td>Find relationships FROM a concept</td>
+</tr>
+<tr>
+<td>Relationship</td>
+<td>DestinationIdIdx</td>
+<td>Standard</td>
+<td>Find relationships TO a concept</td>
+</tr>
+<tr>
+<td>Relationship</td>
+<td>TypeIdIdx</td>
+<td>Standard</td>
+<td>Filter by relationship type (IS-A, etc.)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="what-not-to-do">What NOT To Do</h3>
+<ul>
+<li>Do NOT add foreign key constraints between tables — RF2 data may
+have dangling references during partial loads</li>
+<li>Do NOT add computed/derived properties — keep classes as pure data
+containers</li>
+<li>Do NOT add class methods yet — those come in later stories (Loader
+in 1.2, Search in 2.1, etc.)</li>
+<li>Do NOT create globals directly — <code>%Persistent</code> handles
+storage mapping automatically</li>
+<li>Do NOT use <code>%Integer</code> for any ID field — all IDs are
+strings</li>
+</ul>
+<h3 id="project-structure-notes">Project Structure Notes</h3>
+<ul>
+<li>Classes go in <code>src/SNOMED/</code> directory following IPM
+conventions (Story 5.1)</li>
+<li>Package name is <code>SNOMED</code> — all classes use this
+prefix</li>
+<li>File naming: <code>Concept.cls</code>, <code>Description.cls</code>,
+<code>Relationship.cls</code> (PascalCase matching class name)</li>
+<li>Target namespace: <code>USER</code> (default IRIS development
+namespace)</li>
+</ul>
+<h3 id="iris-platform-notes">IRIS Platform Notes</h3>
+<ul>
+<li>Platform: InterSystems IRIS for Health 2026.2.0AI (Docker
+container)</li>
+<li>Classes are compiled with
+<code>$SYSTEM.OBJ.Compile("SNOMED.Concept", "ck")</code> or via
+Studio/VS Code ObjectScript extension</li>
+<li>SQL access is automatic once classes extend <code>%Persistent</code>
+— table name = package.class</li>
+<li>The <code>%Storage.Default</code> storage strategy is used (default)
+— no custom storage mapping needed</li>
+</ul>
+<h3 id="references">References</h3>
+<ul>
+<li>[Source:
+_bmad-output/planning-artifacts/research/technical-iris-for-health-ai-hub-snomed-ct-port-research-2026-05-13.md#6.
+Recommended Architecture]</li>
+<li>[Source: _bmad-output/planning-artifacts/epics.md#Story 1.1]</li>
+<li>[Source: _bmad-output/project-context.md — SCTIDs are strings, RF2
+is tab-separated]</li>
+</ul>
+<h2 id="dev-agent-record">Dev Agent Record</h2>
+<h3 id="agent-model-used">Agent Model Used</h3>
+<p>Claude Opus 4.6</p>
+<h3 id="debug-log-references">Debug Log References</h3>
+<p>N/A</p>
+<h3 id="completion-notes-list">Completion Notes List</h3>
+<ul>
+<li>Tasks 1-3 complete: All three persistent classes created with
+correct properties, types, and indexes per AC #1-#5</li>
+<li>All SCTID fields stored as <code>%String(MAXLEN=20)</code> — never
+numeric (AC #5)</li>
+<li><code>SNOMED.Concept</code>: ConceptId (unique), Active (bitmap),
+EffectiveTime, ModuleId, DefinitionStatusId</li>
+<li><code>SNOMED.Description</code>: DescriptionId (unique), ConceptId
+(indexed), Term (MAXLEN=1024), TypeId (indexed), Active,
+LanguageCode</li>
+<li><code>SNOMED.Relationship</code>: RelationshipId (unique), SourceId
+(indexed), DestinationId (indexed), TypeId (indexed), Active,
+RelationshipGroup</li>
+<li>Task 4 verified: All 3 classes compiled cleanly via
+<code>$SYSTEM.OBJ.LoadDir()</code>, SQL tables confirmed with correct
+columns (Concept:6, Description:7, Relationship:7), SELECT queries
+return SQLCODE 0</li>
+</ul>
+<h3 id="file-list">File List</h3>
+<ul>
+<li>src/SNOMED/Concept.cls (NEW)</li>
+<li>src/SNOMED/Description.cls (NEW)</li>
+<li>src/SNOMED/Relationship.cls (NEW)</li>
+</ul>
+</body>
+</html>

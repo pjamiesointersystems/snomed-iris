@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>3-2-snomed-hierarchy-tools</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">3-2-snomed-hierarchy-tools</h1>
+</header>
+<h1 id="story-3.2-snomed-hierarchy-tools">Story 3.2: SNOMED Hierarchy
+Tools</h1>
+<p>Status: review</p>
+<h2 id="story">Story</h2>
+<p>As a Claude Desktop/Code user, I want MCP tools for navigating the
+SNOMED hierarchy (ancestors, descendants, subsumption), so that I can
+explore clinical concept relationships through conversation.</p>
+<h2 id="acceptance-criteria">Acceptance Criteria</h2>
+<ol type="1">
+<li><code>SNOMED.Tools.Hierarchy</code> extends <code>%AI.Tool</code>
+with hierarchy navigation methods</li>
+<li><code>IsA(conceptId, ancestorId)</code> returns true/false
+indicating subsumption relationship</li>
+<li><code>GetAncestors(conceptId)</code> returns a JSON array of
+ancestor concepts with their preferred terms</li>
+<li><code>GetDescendants(conceptId, maxResults)</code> returns
+descendant concepts (limited to <code>maxResults</code>, default 100)
+with preferred terms</li>
+<li><code>GetChildren(conceptId)</code> returns only direct child
+concepts with preferred terms</li>
+<li><code>GetParents(conceptId)</code> returns only direct parent
+concepts with preferred terms</li>
+</ol>
+<h2 id="tasks-subtasks">Tasks / Subtasks</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Task 1: Create
+<code>SNOMED.Tools.Hierarchy</code> class (AC: #1-#6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Create
+<code>src/SNOMED/Tools/Hierarchy.cls</code> extending
+<code>%AI.Tool</code></label></li>
+<li><label><input type="checkbox" checked="" />Implement
+<code>IsA(conceptId, ancestorId)</code> — delegates to
+<code>SNOMED.Hierarchy.IsDescendantOf()</code></label></li>
+<li><label><input type="checkbox" checked="" />Implement
+<code>GetAncestors(conceptId)</code> — gets ancestor IDs then enriches
+with preferred terms</label></li>
+<li><label><input type="checkbox" checked="" />Implement
+<code>GetDescendants(conceptId, maxResults)</code> — gets descendant IDs
+(limited) then enriches with preferred terms</label></li>
+<li><label><input type="checkbox" checked="" />Implement
+<code>GetChildren(conceptId)</code> — gets direct children then enriches
+with preferred terms</label></li>
+<li><label><input type="checkbox" checked="" />Implement
+<code>GetParents(conceptId)</code> — gets direct parents then enriches
+with preferred terms</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 2: Test in Docker
+container (AC: #1-#6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Load test fixtures,
+compute TC</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>IsA("46635009","73211009")</code> returns true</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>IsA("73211009","46635009")</code> returns false</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>GetAncestors("46635009")</code> returns ancestors with
+terms</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>GetDescendants("138875005", 100)</code> returns descendants with
+terms</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>GetChildren("73211009")</code> returns direct children with
+terms</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>GetParents("46635009")</code> returns direct parents with
+terms</label></li>
+</ul></li>
+</ul>
+<h2 id="dev-notes">Dev Notes</h2>
+<h3 id="architecture-pattern">Architecture Pattern</h3>
+<p>This story creates <code>SNOMED.Tools.Hierarchy</code> extending
+<code>%AI.Tool</code> — same pattern as Story 3.1’s Lookup and Search
+tools.</p>
+<p>Key difference from <code>SNOMED.Hierarchy</code> (Story 2.3): the
+<strong>Tool</strong> version enriches results with preferred terms
+(FSN/Synonym) so the LLM gets human-readable concept names, not just raw
+SCTIDs.</p>
+<h3 id="delegation-pattern">Delegation Pattern</h3>
+<p>Each tool method delegates to the existing
+<code>SNOMED.Hierarchy</code> class for the core global lookups, then
+enriches with description terms:</p>
+<pre><code>SNOMED.Tools.Hierarchy.GetAncestors(conceptId)
+  → Parse JSON from ##class(SNOMED.Hierarchy).GetAncestors(conceptId)
+  → For each ancestor ID, look up preferred term
+  → Return enriched JSON array</code></pre>
+<h3 id="enrichment-getting-preferred-terms">Enrichment: Getting
+Preferred Terms</h3>
+<p>To get the preferred term (FSN or Synonym) for a concept:</p>
+<pre class="objectscript"><code>// Get FSN for a concept
+Set stmt = ##class(%SQL.Statement).%New()
+Do stmt.%Prepare(&quot;SELECT Term FROM SNOMED.Description WHERE ConceptId = ? AND TypeId = &#39;900000000000003001&#39; AND Active = 1&quot;)
+Set rs = stmt.%Execute(conceptId)
+If rs.%Next() Set term = rs.Term</code></pre>
+<p>For efficiency, prepare the statement once and reuse for multiple
+lookups within a method call.</p>
+<h3 id="implementation-code-pattern">Implementation Code Pattern</h3>
+<pre class="objectscript"><code>ClassMethod GetAncestors(conceptId As %String) As %String
+{
+    // Get raw ancestor IDs from existing Hierarchy class
+    Set jsonStr = ##class(SNOMED.Hierarchy).GetAncestors(conceptId)
+    Set ids = ##class(%DynamicArray).%FromJSON(jsonStr)
+
+    // Enrich with preferred terms
+    Set results = []
+    Set stmt = ##class(%SQL.Statement).%New()
+    Do stmt.%Prepare(&quot;SELECT Term FROM SNOMED.Description WHERE ConceptId = ? AND TypeId = &#39;900000000000003001&#39; AND Active = 1&quot;)
+
+    Set iter = ids.%GetIterator()
+    While iter.%GetNext(.key, .id) {
+        Set rs = stmt.%Execute(id)
+        Set term = &quot;&quot;
+        If rs.%Next() Set term = rs.Term
+        Set obj = {}
+        Set obj.ConceptId = id
+        Set obj.FSN = term
+        Do results.%Push(obj)
+    }
+    Return results.%ToJSON()
+}</code></pre>
+<h3 id="getdescendants-with-maxresults-limiting">GetDescendants with
+maxResults Limiting</h3>
+<p>Since <code>SNOMED.Hierarchy.GetDescendants()</code> returns ALL
+descendants (could be thousands), the Tool version needs to limit
+results:</p>
+<pre class="objectscript"><code>ClassMethod GetDescendants(conceptId As %String, maxResults As %Integer = 100) As %String
+{
+    Set results = []
+    Set count = 0
+    Set stmt = ##class(%SQL.Statement).%New()
+    Do stmt.%Prepare(&quot;SELECT Term FROM SNOMED.Description WHERE ConceptId = ? AND TypeId = &#39;900000000000003001&#39; AND Active = 1&quot;)
+
+    // Iterate directly on global for efficiency with limit
+    Set desc = &quot;&quot;
+    For {
+        Set desc = $ORDER(^SNOMED.TC(conceptId, desc))
+        Quit:desc=&quot;&quot;
+        Quit:count&gt;=maxResults
+        Set rs = stmt.%Execute(desc)
+        Set term = &quot;&quot;
+        If rs.%Next() Set term = rs.Term
+        Set obj = {}
+        Set obj.ConceptId = desc
+        Set obj.FSN = term
+        Do results.%Push(obj)
+        Set count = count + 1
+    }
+    Return results.%ToJSON()
+}</code></pre>
+<h3 id="isa-simple-boolean-wrapper">IsA — Simple Boolean Wrapper</h3>
+<pre class="objectscript"><code>ClassMethod IsA(conceptId As %String, ancestorId As %String) As %String
+{
+    Set result = {}
+    Set result.isDescendant = ##class(SNOMED.Hierarchy).IsDescendantOf(conceptId, ancestorId)
+    Set result.conceptId = conceptId
+    Set result.ancestorId = ancestorId
+    Return result.%ToJSON()
+}</code></pre>
+<p>Note: Returns JSON (not raw boolean) because MCP tool results should
+be self-describing for the LLM.</p>
+<h3 id="critical-implementation-rules">Critical Implementation
+Rules</h3>
+<ul>
+<li><strong>Extend <code>%AI.Tool</code></strong> — required for MCP
+tool discovery</li>
+<li><strong>Return <code>%String</code> with JSON</strong> — all tool
+methods must return JSON strings</li>
+<li><strong>Enrich with FSN</strong> — tool methods return
+human-readable terms, not just IDs</li>
+<li><strong>FSN TypeId = <code>900000000000003001</code></strong> —
+Fully Specified Name</li>
+<li><strong>Reuse prepared statements</strong> — prepare SQL once,
+execute multiple times within a method</li>
+<li><strong><code>maxResults</code> default = 100</strong> for
+GetDescendants — prevents overwhelming the LLM with huge result
+sets</li>
+<li><strong><code>%DynamicArray.%FromJSON()</code></strong> to parse
+JSON strings back into iterable arrays</li>
+<li><strong><code>%GetIterator()</code> +
+<code>%GetNext(.key, .value)</code></strong> to iterate
+<code>%DynamicArray</code> objects</li>
+<li><strong>Doc comments (<code>///</code>) on methods</strong> — these
+become LLM-visible tool descriptions</li>
+<li><strong>GetDescendants iterates global directly</strong> — avoids
+loading all descendants into memory just to limit</li>
+</ul>
+<h3 id="what-not-to-do">What NOT To Do</h3>
+<ul>
+<li>Do NOT return raw boolean from IsA — return JSON for
+consistency</li>
+<li>Do NOT load all descendants then slice — iterate global with a
+counter limit</li>
+<li>Do NOT forget to handle concepts without FSN — set term to empty
+string</li>
+<li>Do NOT create a new Hierarchy class — extend the EXISTING
+<code>SNOMED.Hierarchy</code> via delegation</li>
+<li>Do NOT put this in <code>src/SNOMED/Hierarchy.cls</code> — create
+NEW file <code>src/SNOMED/Tools/Hierarchy.cls</code></li>
+<li>Do NOT skip enrichment — the LLM needs readable concept names, not
+just SCTIDs</li>
+</ul>
+<h3 id="test-fixture-expected-results">Test Fixture Expected
+Results</h3>
+<p>After loading fixtures + computing TC: -
+<code>IsA("46635009","73211009")</code> →
+<code>{"isDescendant":true,"conceptId":"46635009","ancestorId":"73211009"}</code>
+- <code>GetAncestors("46635009")</code> → array with
+<code>{"ConceptId":"73211009","FSN":"Diabetes mellitus (disorder)"}</code>
+and
+<code>{"ConceptId":"138875005","FSN":"SNOMED CT Concept (SNOMED RT+CTV3)"}</code>
+- <code>GetDescendants("138875005", 100)</code> → array with both
+73211009 and 46635009 with their FSNs -
+<code>GetChildren("73211009")</code> →
+<code>[{"ConceptId":"46635009","FSN":"Type 1 diabetes mellitus (disorder)"}]</code>
+- <code>GetParents("46635009")</code> →
+<code>[{"ConceptId":"73211009","FSN":"Diabetes mellitus (disorder)"}]</code></p>
+<h3 id="previous-story-intelligence">Previous Story Intelligence</h3>
+<p>From Story 3.1: - <code>%AI.Tool</code> exists and works in the
+2026.2.0AI container - Tool classes compile cleanly with classmethods -
+<code>///</code> doc comments become tool descriptions - SQL pattern:
+<code>##class(%SQL.Statement).%New()</code> → <code>%Prepare</code> →
+<code>%Execute</code> → <code>rs.%Next()</code> - JSON:
+<code>Set obj = {}</code>, <code>Set obj.Prop = val</code>,
+<code>Do arr.%Push(obj)</code>, <code>Return arr.%ToJSON()</code></p>
+<p>From Story 2.3: - <code>SNOMED.Hierarchy</code> class has:
+<code>IsDescendantOf</code>, <code>GetAncestors</code>,
+<code>GetDescendants</code>, <code>GetChildren</code>,
+<code>GetParents</code> - All return JSON strings (arrays of concept
+IDs) except <code>IsDescendantOf</code> which returns
+<code>%Boolean</code> - Global structure:
+<code>^SNOMED.TC(ancestor, descendant)</code>,
+<code>^SNOMED.Children(parent, child)</code></p>
+<h3 id="references">References</h3>
+<ul>
+<li>[Source: _bmad-output/planning-artifacts/epics.md#Story 3.2]</li>
+<li>[Source: src/SNOMED/Tools/Lookup.cls — %AI.Tool pattern
+reference]</li>
+<li>[Source: src/SNOMED/Hierarchy.cls — delegation target for hierarchy
+queries]</li>
+</ul>
+<h2 id="dev-agent-record">Dev Agent Record</h2>
+<h3 id="agent-model-used">Agent Model Used</h3>
+<p>Claude Opus 4.6</p>
+<h3 id="debug-log-references">Debug Log References</h3>
+<p>N/A — clean implementation, no issues.</p>
+<h3 id="completion-notes-list">Completion Notes List</h3>
+<ul>
+<li>Created <code>SNOMED.Tools.Hierarchy</code> extending
+<code>%AI.Tool</code> with 5 methods</li>
+<li><code>IsA</code> returns JSON
+<code>{"isDescendant":1/0,"conceptId":"...","ancestorId":"..."}</code></li>
+<li><code>GetAncestors</code>, <code>GetChildren</code>,
+<code>GetParents</code> delegate to <code>SNOMED.Hierarchy</code> then
+enrich via <code>%DynamicArray.%FromJSON()</code> +
+<code>%GetIterator()</code></li>
+<li><code>GetDescendants</code> iterates <code>^SNOMED.TC</code> global
+directly with maxResults limit (default 100)</li>
+<li>All methods enrich concept IDs with FSN (TypeId 900000000000003001)
+via prepared SQL statement reuse</li>
+<li>Verified all 6 acceptance criteria with test fixture data</li>
+</ul>
+<h3 id="file-list">File List</h3>
+<ul>
+<li>src/SNOMED/Tools/Hierarchy.cls (NEW)</li>
+</ul>
+</body>
+</html>

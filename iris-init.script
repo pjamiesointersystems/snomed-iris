@@ -1,0 +1,7 @@
+; Load all classes first without compiling, then compile in dependency order
+Set sc = $SYSTEM.OBJ.LoadDir("/opt/snomed-iris/src/", "k", .err, 1)
+If $$$ISERR(sc) Do $SYSTEM.Status.DisplayError(sc)
+Set sc = $SYSTEM.OBJ.CompilePackage("SNOMED", "ck")
+If $$$ISERR(sc) Do $SYSTEM.Status.DisplayError(sc)
+Do ##class(SNOMED.Installer).Setup()
+Halt

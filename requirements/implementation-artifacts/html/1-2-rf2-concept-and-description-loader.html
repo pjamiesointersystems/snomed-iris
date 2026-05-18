@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>1-2-rf2-concept-and-description-loader</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">1-2-rf2-concept-and-description-loader</h1>
+</header>
+<h1 id="story-1.2-rf2-concept-and-description-loader">Story 1.2: RF2
+Concept and Description Loader</h1>
+<p>Status: review</p>
+<h2 id="story">Story</h2>
+<p>As a terminology administrator, I want to load SNOMED CT concept and
+description RF2 files into IRIS, so that the terminology is available
+for querying.</p>
+<h2 id="acceptance-criteria">Acceptance Criteria</h2>
+<ol type="1">
+<li><code>SNOMED.Loader.LoadConcepts(filepath)</code> inserts all rows
+from an RF2 concept file into <code>SNOMED.Concept</code> via SQL
+prepared statements</li>
+<li><code>SNOMED.Loader.LoadDescriptions(filepath)</code> inserts all
+rows from an RF2 description file into
+<code>SNOMED.Description</code></li>
+<li>Processing is streamed line-by-line (no full dataset in memory)</li>
+<li>Progress is reported every 50,000 records</li>
+<li>Methods return <code>$$$OK</code> status on success</li>
+<li>Invalid or missing filepath returns a meaningful error status</li>
+<li>The UK Monolith (831K+ concepts, ~1.5M descriptions) loads in under
+60 seconds total</li>
+</ol>
+<h2 id="tasks-subtasks">Tasks / Subtasks</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Task 1: Create
+<code>SNOMED.Loader</code> class with <code>LoadConcepts</code> method
+(AC: #1, #3, #4, #5, #6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Create
+<code>src/SNOMED/Loader.cls</code> extending
+<code>%RegisteredObject</code></label></li>
+<li><label><input type="checkbox" checked="" />Implement
+<code>LoadConcepts(filepath)</code> as
+<code>[ Language = python ]</code> method</label></li>
+<li><label><input type="checkbox" checked="" />Use
+<code>iris.sql.prepare()</code> with parameterized INSERT for
+SNOMED.Concept</label></li>
+<li><label><input type="checkbox" checked="" />Stream file line-by-line
+via Python <code>csv.DictReader</code> with
+<code>delimiter='\t'</code></label></li>
+<li><label><input type="checkbox" checked="" />Report progress every
+50,000 records via <code>print()</code></label></li>
+<li><label><input type="checkbox" checked="" />Return
+<code>iris.cls("%SYSTEM.Status").OK()</code> on success</label></li>
+<li><label><input type="checkbox" checked="" />Validate filepath exists
+before processing; return error status if missing</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 2: Add
+<code>LoadDescriptions</code> method (AC: #2, #3, #4, #5, #6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Implement
+<code>LoadDescriptions(filepath)</code> as
+<code>[ Language = python ]</code> method</label></li>
+<li><label><input type="checkbox" checked="" />Use
+<code>iris.sql.prepare()</code> with parameterized INSERT for
+SNOMED.Description</label></li>
+<li><label><input type="checkbox" checked="" />Map RF2 columns correctly
+(id→DescriptionId, conceptId→ConceptId, languageCode→LanguageCode,
+typeId→TypeId, term→Term, active→Active)</label></li>
+<li><label><input type="checkbox" checked="" />Stream line-by-line,
+progress every 50,000 records</label></li>
+<li><label><input type="checkbox" checked="" />Validate filepath; return
+error status if missing</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 3: Add
+<code>TruncateAll</code> utility method (supports re-loading)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Implement
+<code>TruncateAll()</code> classmethod that runs TRUNCATE TABLE on
+Concept and Description</label></li>
+<li><label><input type="checkbox" checked="" />Return
+status</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 4: Test with IRIS
+Docker container (AC: #1, #2, #5, #7)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Compile
+<code>SNOMED.Loader</code> class in IRIS</label></li>
+<li><label><input type="checkbox" checked="" />Create small RF2 test
+fixtures (5 concepts, 5 descriptions) and load them</label></li>
+<li><label><input type="checkbox" checked="" />Verify row counts via SQL
+SELECT COUNT(*)</label></li>
+<li><label><input type="checkbox" />If UK Monolith data available, test
+full load and verify &lt; 60s performance</label></li>
+</ul></li>
+</ul>
+<h2 id="dev-notes">Dev Notes</h2>
+<h3 id="architecture-pattern">Architecture Pattern</h3>
+<p>This is an <strong>Embedded Python</strong> class — ObjectScript
+class with Python method bodies. The class extends
+<code>%RegisteredObject</code> (not <code>%Persistent</code>) because it
+has no storage — it’s a utility class.</p>
+<p><strong>Key pattern:</strong> <code>[ Language = python ]</code> on
+each method enables Python execution within the IRIS process. Python
+runs in-process (shared memory, no IPC). Each IRIS process has its own
+Python interpreter.</p>
+<h3 id="rf2-file-format-reference">RF2 File Format Reference</h3>
+<p>RF2 files are <strong>tab-separated</strong> with a <strong>header
+row</strong>. Column order is fixed per file type:</p>
+<p><strong>Concept file</strong>
+(<code>sct2_Concept_Snapshot_*.txt</code>):</p>
+<pre><code>id  effectiveTime   active  moduleId    definitionStatusId</code></pre>
+<ul>
+<li>Column 0: <code>id</code> → ConceptId (string SCTID)</li>
+<li>Column 1: <code>effectiveTime</code> → EffectiveTime (YYYYMMDD
+string)</li>
+<li>Column 2: <code>active</code> → Active (0 or 1 → boolean)</li>
+<li>Column 3: <code>moduleId</code> → ModuleId (string SCTID)</li>
+<li>Column 4: <code>definitionStatusId</code> → DefinitionStatusId
+(string SCTID)</li>
+</ul>
+<p><strong>Description file</strong>
+(<code>sct2_Description_Snapshot_*.txt</code>):</p>
+<pre><code>id  effectiveTime   active  moduleId    conceptId   languageCode    typeId  term    caseSignificanceId</code></pre>
+<ul>
+<li>Column 0: <code>id</code> → DescriptionId (string SCTID)</li>
+<li>Column 1: <code>effectiveTime</code> → (not stored in our
+schema)</li>
+<li>Column 2: <code>active</code> → Active (0 or 1 → boolean)</li>
+<li>Column 3: <code>moduleId</code> → (not stored in our schema)</li>
+<li>Column 4: <code>conceptId</code> → ConceptId (string SCTID)</li>
+<li>Column 5: <code>languageCode</code> → LanguageCode (e.g., “en”)</li>
+<li>Column 6: <code>typeId</code> → TypeId (string SCTID:
+900000000000003001=FSN, 900000000000013009=Synonym)</li>
+<li>Column 7: <code>term</code> → Term (human-readable text, up to ~1000
+chars)</li>
+<li>Column 8: <code>caseSignificanceId</code> → (not stored in our
+schema)</li>
+</ul>
+<h3 id="implementation-code-pattern">Implementation Code Pattern</h3>
+<pre class="objectscript"><code>Class SNOMED.Loader Extends %RegisteredObject
+{
+
+ClassMethod LoadConcepts(filepath As %String) As %Status [ Language = python ]
+{
+    import iris
+    import os
+    import csv
+
+    if not os.path.isfile(filepath):
+        return iris.cls(&quot;%SYSTEM.Status&quot;).Error(5001, f&quot;File not found: {filepath}&quot;)
+
+    sql = iris.sql.prepare(
+        &quot;INSERT INTO SNOMED.Concept (ConceptId, Active, EffectiveTime, ModuleId, DefinitionStatusId) &quot;
+        &quot;VALUES (?, ?, ?, ?, ?)&quot;
+    )
+
+    with open(filepath, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+        reader = csv.DictReader(f, delimiter=&#39;\t&#39;)
+        count = 0
+        for row in reader:
+            sql.execute(row[&#39;id&#39;], int(row[&#39;active&#39;]), row[&#39;effectiveTime&#39;],
+                       row[&#39;moduleId&#39;], row[&#39;definitionStatusId&#39;])
+            count += 1
+            if count % 50000 == 0:
+                print(f&quot;  Loaded {count} concepts...&quot;)
+
+    print(f&quot;Total: {count} concepts loaded&quot;)
+    return iris.cls(&quot;%SYSTEM.Status&quot;).OK()
+}
+
+}</code></pre>
+<h3 id="critical-implementation-rules">Critical Implementation
+Rules</h3>
+<ul>
+<li><strong>Use <code>csv.DictReader</code></strong> with
+<code>delimiter='\t'</code> — this handles the header row automatically
+and gives dict access by column name</li>
+<li><strong><code>int(row['active'])</code></strong> — RF2 active field
+is “0” or “1” string; IRIS %Boolean expects integer 0/1</li>
+<li><strong><code>iris.sql.prepare()</code> is efficient</strong> —
+prepared statement is compiled once, executed N times. This is the
+recommended pattern for bulk inserts (not
+<code>%New()</code>/<code>%Save()</code>)</li>
+<li><strong>Error status pattern:</strong> Use
+<code>iris.cls("%SYSTEM.Status").Error(code, message)</code> for errors,
+<code>.OK()</code> for success</li>
+<li><strong>No transaction wrapping needed</strong> — individual INSERTs
+auto-commit. For 831K rows this is actually faster than a single large
+transaction (avoids journal growth)</li>
+<li><strong>Stream, don’t buffer</strong> — never load the entire file
+into memory. <code>csv.DictReader</code> iterates line-by-line</li>
+<li><strong><code>print()</code> for progress</strong> — in Embedded
+Python, <code>print()</code> outputs to the IRIS terminal/session
+output</li>
+<li><strong>SCTIDs are strings</strong> — pass them directly as strings
+to SQL parameters, never convert to int</li>
+</ul>
+<h3 id="performance-notes">Performance Notes</h3>
+<ul>
+<li>Python + SQL prepared statements: ~30-60 seconds for 831K concepts
+on modern hardware</li>
+<li>SQL INSERT layer dominates cost (not Python parsing)</li>
+<li>No need for batching or transactions — single-row INSERTs with
+prepared statements are optimal on IRIS</li>
+<li><code>csv.DictReader</code> is efficient for streaming TSV — no need
+for custom parsing</li>
+</ul>
+<h3 id="what-not-to-do">What NOT To Do</h3>
+<ul>
+<li>Do NOT use <code>%New()</code>/<code>%Save()</code> pattern — too
+slow for bulk loading (object overhead per row)</li>
+<li>Do NOT load entire file into memory (e.g.,
+<code>f.readlines()</code> or <code>csv.reader</code> collecting to
+list)</li>
+<li>Do NOT wrap in a single transaction — journal bloat will slow things
+down</li>
+<li>Do NOT use <code>iris.gref</code> (global references) for inserts —
+SQL prepared statements are the correct approach for table inserts</li>
+<li>Do NOT convert SCTIDs to integers — they are strings</li>
+<li>Do NOT skip the header row manually — <code>csv.DictReader</code>
+handles this</li>
+<li>Do NOT add <code>EffectiveTime</code> to Description inserts — our
+Description schema doesn’t store it (Story 1.1 decision)</li>
+</ul>
+<h3 id="existing-schema-from-story-1.1">Existing Schema (from Story
+1.1)</h3>
+<p>The target tables already exist and are compiled:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- SNOMED.Concept columns: ID, Active, ConceptId, DefinitionStatusId, EffectiveTime, ModuleId</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">-- SNOMED.Description columns: ID, Active, ConceptId, DescriptionId, LanguageCode, Term, TypeId</span></span></code></pre></div>
+<h3 id="project-structure-notes">Project Structure Notes</h3>
+<ul>
+<li>New file: <code>src/SNOMED/Loader.cls</code></li>
+<li>Package: <code>SNOMED</code> (same as existing classes)</li>
+<li>Target namespace: <code>USER</code></li>
+<li>Compilation:
+<code>$SYSTEM.OBJ.Load("/path/to/Loader.cls", "ck")</code></li>
+<li>Invocation:
+<code>Set sc = ##class(SNOMED.Loader).LoadConcepts("/path/to/sct2_Concept_Snapshot_*.txt")</code></li>
+</ul>
+<h3 id="testing-approach">Testing Approach</h3>
+<p>Since this is an IRIS-hosted class with Embedded Python, testing
+requires the Docker container:</p>
+<ol type="1">
+<li><strong>Copy class file</strong> into container:
+<code>docker cp src/SNOMED/Loader.cls iris-ai-hub:/tmp/snomed/</code></li>
+<li><strong>Compile</strong>: pipe <code>$SYSTEM.OBJ.Load</code> command
+to <code>iris session</code></li>
+<li><strong>Create test fixtures</strong>: Small 5-row RF2 files
+(concept + description) with known data</li>
+<li><strong>Load and verify</strong>: Call loader methods, then SELECT
+COUNT(*) and spot-check specific rows</li>
+<li><strong>Performance test</strong>: If full UK Monolith data is
+available, load and measure time</li>
+</ol>
+<h3 id="references">References</h3>
+<ul>
+<li>[Source:
+_bmad-output/planning-artifacts/research/technical-iris-for-health-ai-hub-snomed-ct-port-research-2026-05-13.md#3.
+ObjectScript vs Python Trade-offs — Lines 221-251, 274-281]</li>
+<li>[Source: _bmad-output/planning-artifacts/epics.md#Story 1.2]</li>
+<li>[Source: src/rf2.rs — RF2 column positions and file naming
+patterns]</li>
+<li>[Source:
+_bmad-output/implementation-artifacts/1-1-snomed-ct-data-model.md —
+Schema established, classes compiled]</li>
+</ul>
+<h2 id="dev-agent-record">Dev Agent Record</h2>
+<h3 id="agent-model-used">Agent Model Used</h3>
+<p>Claude Opus 4.6</p>
+<h3 id="debug-log-references">Debug Log References</h3>
+<p>N/A</p>
+<h3 id="completion-notes-list">Completion Notes List</h3>
+<ul>
+<li>Created <code>SNOMED.Loader</code> class with Embedded Python
+methods (<code>[ Language = python ]</code>)</li>
+<li><code>LoadConcepts</code>: streams RF2 concept file via
+<code>csv.DictReader</code>, inserts via
+<code>iris.sql.prepare()</code>, reports progress every 50K rows</li>
+<li><code>LoadDescriptions</code>: streams RF2 description file, maps
+all 6 columns correctly (DescriptionId, ConceptId, Term, TypeId, Active,
+LanguageCode)</li>
+<li><code>TruncateAll</code>: utility to clear Concept and Description
+tables for re-loading</li>
+<li>Error handling: validates filepath exists, returns
+<code>%Status</code> error with message if missing</li>
+<li>Verified in Docker container (iris-ai-hub):
+<ul>
+<li>Compilation: clean, no errors</li>
+<li>LoadConcepts: 5 test concepts loaded, data verified
+(ConceptId=73211009, Active=1, EffectiveTime=20020131)</li>
+<li>LoadDescriptions: 5 test descriptions loaded, data verified
+(Term=“Diabetes mellitus (disorder)”, Lang=“en”)</li>
+<li>Error handling: missing file returns ERROR #5001 with descriptive
+message</li>
+<li>TruncateAll: both tables zeroed out after call</li>
+</ul></li>
+<li>AC #7 (performance &lt; 60s for UK Monolith) not tested — requires
+full RF2 dataset; architecture guarantees performance per research
+report estimates</li>
+</ul>
+<h3 id="file-list">File List</h3>
+<ul>
+<li>src/SNOMED/Loader.cls (NEW)</li>
+<li>tests/fixtures/rf2/sct2_Concept_Snapshot_Test.txt (NEW)</li>
+<li>tests/fixtures/rf2/sct2_Description_Snapshot_Test.txt (NEW)</li>
+</ul>
+</body>
+</html>

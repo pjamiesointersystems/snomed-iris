@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>4-3-semantic-search-method-and-mcp-tool</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">4-3-semantic-search-method-and-mcp-tool</h1>
+</header>
+<h1 id="story-4.3-semantic-search-method-and-mcp-tool">Story 4.3:
+Semantic Search Method and MCP Tool</h1>
+<p>Status: review</p>
+<h2 id="story">Story</h2>
+<p>As a Claude Desktop/Code user, I want to search for SNOMED concepts
+by semantic meaning through an MCP tool, so that I can find relevant
+concepts even when I don’t know the exact clinical terminology.</p>
+<h2 id="acceptance-criteria">Acceptance Criteria</h2>
+<ol type="1">
+<li><code>SNOMED.Search.Semantic(query, maxResults)</code> embeds the
+query via Ollama, then uses <code>VECTOR_COSINE()</code> to return the
+top N matching concepts</li>
+<li>Results include ConceptId, Term, and similarity score</li>
+<li>Only results above a minimum threshold (default 0.5) are
+returned</li>
+<li><code>SNOMED.Tools.Semantic</code> extends <code>%AI.Tool</code>
+with a <code>SemanticSearch(query, maxResults)</code> method</li>
+<li>The ToolSet XData is updated to include the Semantic tool class</li>
+<li>The tool is discoverable and callable via the MCP service</li>
+</ol>
+<h2 id="tasks-subtasks">Tasks / Subtasks</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Task 1: Create
+<code>SNOMED.Search.Semantic</code> method (AC: #1, #2, #3)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Add <code>Semantic</code>
+classmethod to <code>src/SNOMED/Search.cls</code> (Python, calls Ollama
+then VECTOR_COSINE)</label></li>
+<li><label><input type="checkbox" checked="" />Embed the query string
+using Ollama <code>/api/embed</code> endpoint</label></li>
+<li><label><input type="checkbox" checked="" />Execute SQL with
+<code>VECTOR_COSINE(Embedding, TO_VECTOR(?, DOUBLE))</code> ordering by
+score DESC</label></li>
+<li><label><input type="checkbox" checked="" />Filter results by minimum
+threshold (default 0.5)</label></li>
+<li><label><input type="checkbox" checked="" />Return JSON array with
+ConceptId, Term, Score for each match</label></li>
+<li><label><input type="checkbox" checked="" />Handle Ollama connection
+errors gracefully (return error JSON)</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 2: Create
+<code>SNOMED.Tools.Semantic</code> MCP tool class (AC: #4)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Create
+<code>src/SNOMED/Tools/Semantic.cls</code> extending
+<code>%AI.Tool</code></label></li>
+<li><label><input type="checkbox" checked="" />Implement
+<code>SemanticSearch(query, maxResults)</code> classmethod delegating to
+<code>SNOMED.Search.Semantic()</code></label></li>
+<li><label><input type="checkbox" checked="" />Add <code>///</code> doc
+comments for LLM-visible tool description</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 3: Update ToolSet to
+include Semantic tool (AC: #5, #6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Add
+<code>&lt;Include Class="SNOMED.Tools.Semantic"/&gt;</code> to
+<code>src/SNOMED/ToolSet.cls</code> XData</label></li>
+<li><label><input type="checkbox" checked="" />Recompile ToolSet and
+verify <code>%Discover()</code> now shows SemanticSearch
+tool</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 4: Test compilation
+and integration (AC: #1-#6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Compile all new/modified
+classes</label></li>
+<li><label><input type="checkbox" checked="" />Verify SemanticSearch
+appears in ToolSet discovery (9 tools total)</label></li>
+<li><label><input type="checkbox" checked="" />Test error handling when
+Ollama is unreachable</label></li>
+<li><label><input type="checkbox" checked="" />Test with fake embeddings
+— vector similarity scoring and threshold filtering work
+correctly</label></li>
+</ul></li>
+</ul>
+<h2 id="dev-notes">Dev Notes</h2>
+<h3 id="architecture-pattern">Architecture Pattern</h3>
+<p>This story has three components: 1. <strong>Search method</strong>
+(<code>SNOMED.Search.Semantic</code>) — Python method that calls Ollama
+then queries VECTOR_COSINE 2. <strong>MCP Tool wrapper</strong>
+(<code>SNOMED.Tools.Semantic</code>) — ObjectScript %AI.Tool that
+delegates to the search method 3. <strong>ToolSet update</strong>
+(<code>SNOMED.ToolSet</code>) — add <code>&lt;Include&gt;</code> for the
+new tool class</p>
+<p>This follows the same delegation pattern as Story 3.1/3.2: Tool class
+(ObjectScript) → Core method (Python/ObjectScript).</p>
+<h3 id="snomed.search-class-existing-being-modified">SNOMED.Search Class
+(EXISTING — being modified)</h3>
+<p>The <code>SNOMED.Search</code> class already exists with a
+<code>Lexical</code> method. This story ADDS a <code>Semantic</code>
+classmethod to the same class.</p>
+<p>Current state of <code>src/SNOMED/Search.cls</code>:</p>
+<pre class="objectscript"><code>Class SNOMED.Search Extends %RegisteredObject
+{
+ClassMethod Lexical(searchTerm As %String, maxResults As %Integer = 20) As %String [ Language = python ]
+{
+    // ... existing lexical search implementation
+}
+}</code></pre>
+<h3 id="semantic-search-implementation">Semantic Search
+Implementation</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ClassMethod Semantic(query As <span class="op">%</span>String, maxResults As <span class="op">%</span>Integer <span class="op">=</span> <span class="dv">10</span>, minScore As <span class="op">%</span>Numeric <span class="op">=</span> <span class="fl">0.5</span>, ollamaUrl As <span class="op">%</span>String <span class="op">=</span> <span class="st">&quot;http://localhost:11434&quot;</span>, modelName As <span class="op">%</span>String <span class="op">=</span> <span class="st">&quot;all-minilm&quot;</span>) As <span class="op">%</span>String [ Language <span class="op">=</span> python ]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> iris</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> json</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> requests</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Step 1: Embed the query using Ollama</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        resp <span class="op">=</span> requests.post(<span class="ss">f&quot;</span><span class="sc">{</span>ollamaUrl<span class="sc">}</span><span class="ss">/api/embed&quot;</span>, json<span class="op">=</span>{</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;model&quot;</span>: modelName,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;input&quot;</span>: [query]</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        }, timeout<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        resp.raise_for_status()</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> (requests.<span class="pp">ConnectionError</span>, requests.exceptions.InvalidURL,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>            requests.exceptions.Timeout, requests.RequestException) <span class="im">as</span> e:</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> json.dumps({<span class="st">&quot;error&quot;</span>: <span class="ss">f&quot;Cannot connect to Ollama: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span>})</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> requests.HTTPError <span class="im">as</span> e:</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> json.dumps({<span class="st">&quot;error&quot;</span>: <span class="ss">f&quot;Ollama API error: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span>})</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> resp.json()</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    embeddings <span class="op">=</span> data.get(<span class="st">&quot;embeddings&quot;</span>, [])</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> embeddings:</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> json.dumps({<span class="st">&quot;error&quot;</span>: <span class="st">&quot;Ollama returned no embeddings&quot;</span>})</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    query_vec <span class="op">=</span> <span class="st">&quot;,&quot;</span>.join(<span class="bu">str</span>(f) <span class="cf">for</span> f <span class="kw">in</span> embeddings[<span class="dv">0</span>])</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Step 2: Query VECTOR_COSINE for similar concepts</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    sql <span class="op">=</span> iris.sql.prepare(</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;SELECT TOP ? ConceptId, Term, &quot;</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;VECTOR_COSINE(Embedding, TO_VECTOR(?, DOUBLE)) AS Score &quot;</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;FROM SNOMED.ConceptEmbedding &quot;</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;ORDER BY Score DESC&quot;</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    rs <span class="op">=</span> sql.execute(maxResults, query_vec)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> row <span class="kw">in</span> rs:</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        score <span class="op">=</span> row[<span class="dv">2</span>]</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> score <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="kw">and</span> <span class="bu">float</span>(score) <span class="op">&gt;=</span> minScore:</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>            results.append({</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;ConceptId&quot;</span>: row[<span class="dv">0</span>],</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;Term&quot;</span>: row[<span class="dv">1</span>],</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;Score&quot;</span>: <span class="bu">round</span>(<span class="bu">float</span>(score), <span class="dv">4</span>)</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>            })</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> json.dumps(results)</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="mcp-tool-wrapper-pattern">MCP Tool Wrapper Pattern</h3>
+<pre class="objectscript"><code>Class SNOMED.Tools.Semantic Extends %AI.Tool
+{
+
+/// Search for SNOMED CT concepts by semantic meaning using vector similarity.
+/// Returns concepts whose embeddings are most similar to the query text.
+/// query: Natural language description of the clinical concept to find
+/// maxResults: Maximum number of results to return (default 10)
+ClassMethod SemanticSearch(query As %String, maxResults As %Integer = 10) As %String
+{
+    Return ##class(SNOMED.Search).Semantic(query, maxResults)
+}
+
+}</code></pre>
+<h3 id="toolset-update">ToolSet Update</h3>
+<p>Add to <code>src/SNOMED/ToolSet.cls</code>:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">Include</span><span class="ot"> Class=</span><span class="st">&quot;SNOMED.Tools.Semantic&quot;</span>/&gt;</span></code></pre></div>
+<p>After the existing
+<code>&lt;Include Class="SNOMED.Tools.Hierarchy"/&gt;</code> line.</p>
+<h3 id="sql-query-details">SQL Query Details</h3>
+<p>The VECTOR_COSINE query:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> TOP ? ConceptId, Term,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>       VECTOR_COSINE(Embedding, TO_VECTOR(?, <span class="dt">DOUBLE</span>)) <span class="kw">AS</span> Score</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> SNOMED.ConceptEmbedding</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> Score <span class="kw">DESC</span></span></code></pre></div>
+<p>Key facts (from Story 4.1): - <code>TO_VECTOR(?, DOUBLE)</code> —
+DOUBLE qualifier is REQUIRED - <code>VECTOR_COSINE()</code> returns 0-1
+(1 = identical direction) - The HNSW ANN index
+(<code>%SQL.Index.HNSW</code>) automatically accelerates
+nearest-neighbor queries - Table name in SQL:
+<code>SNOMED.ConceptEmbedding</code></p>
+<h3 id="error-handling">Error Handling</h3>
+<p>The Semantic method returns JSON in ALL cases: -
+<strong>Success</strong>:
+<code>[{"ConceptId": "...", "Term": "...", "Score": 0.85}, ...]</code> -
+<strong>Ollama error</strong>:
+<code>{"error": "Cannot connect to Ollama: ..."}</code> - <strong>No
+results above threshold</strong>: <code>[]</code> (empty array)</p>
+<p>This is consistent with other Tool methods that always return JSON
+strings.</p>
+<h3 id="critical-implementation-rules">Critical Implementation
+Rules</h3>
+<ul>
+<li><strong>Add <code>Semantic</code> to EXISTING
+<code>SNOMED.Search</code> class</strong> — do NOT create a new class
+for the search method</li>
+<li><strong><code>SNOMED.Tools.Semantic</code> is a NEW file</strong> at
+<code>src/SNOMED/Tools/Semantic.cls</code></li>
+<li><strong>Tool delegates to Search</strong> —
+<code>SNOMED.Tools.Semantic.SemanticSearch()</code> calls
+<code>##class(SNOMED.Search).Semantic()</code></li>
+<li><strong>Default minScore = 0.5</strong> — filter out low-quality
+matches</li>
+<li><strong>Default maxResults = 10</strong> — keep result sets
+manageable for LLM</li>
+<li><strong>Default model = “all-minilm”</strong> — must match the model
+used for embedding generation (Story 4.2)</li>
+<li><strong><code>requests</code> is available</strong> in the container
+(confirmed in Story 4.2, version 2.33.1)</li>
+<li><strong>Return JSON string from ALL tool methods</strong> — never
+raw values</li>
+<li><strong><code>///</code> doc comments become tool
+descriptions</strong> — write them clearly for the LLM</li>
+<li><strong>ToolSet uses
+<code>&lt;Include Class="SNOMED.Tools.Semantic"/&gt;</code> XML</strong>
+— add after Hierarchy</li>
+</ul>
+<h3 id="what-not-to-do">What NOT To Do</h3>
+<ul>
+<li>Do NOT create a separate <code>SNOMED.Search.Semantic</code> class —
+add method to existing <code>SNOMED.Search</code></li>
+<li>Do NOT use <code>sentence_transformers</code> — use Ollama HTTP API
+(same as Story 4.2)</li>
+<li>Do NOT return results below minScore threshold — filter them
+out</li>
+<li>Do NOT hardcode the Ollama URL in the Tool class — pass through
+parameters</li>
+<li>Do NOT modify the MCP.Service class — it auto-discovers from
+ToolSet</li>
+<li>Do NOT change how existing tools work — only ADD new
+functionality</li>
+<li>Do NOT forget to update ToolSet XData — or the tool won’t be
+discoverable</li>
+</ul>
+<h3 id="testing-strategy">Testing Strategy</h3>
+<ol type="1">
+<li><strong>Compile all classes</strong> — Search.cls (modified),
+Tools/Semantic.cls (new), ToolSet.cls (modified)</li>
+<li><strong>ToolSet discovery</strong> — call <code>%Discover()</code>
+and verify SemanticSearch appears</li>
+<li><strong>Error path</strong> — call
+<code>SNOMED.Search.Semantic("test", 10, 0.5, "http://localhost:59999")</code>
+with bad URL</li>
+<li><strong>If Ollama available</strong> — insert fake embeddings, embed
+a query, verify results with scores</li>
+</ol>
+<h3 id="previous-story-intelligence">Previous Story Intelligence</h3>
+<p>From Story 4.2: - <code>requests</code> 2.33.1 available in container
+- Ollama <code>/api/embed</code> accepts
+<code>{"model": "...", "input": ["text"]}</code>, returns
+<code>{"embeddings": [[...]]}</code> -
+<code>iris.sql.prepare().execute()</code> throws SQLError on DELETE with
+no rows (SQLCODE 100) - <code>TO_VECTOR(?, DOUBLE)</code> syntax
+confirmed working</p>
+<p>From Story 4.1: - <code>SNOMED.ConceptEmbedding</code> table:
+ConceptId, Term, Embedding (VECTOR DOUBLE 384) -
+<code>VECTOR_COSINE(Embedding, TO_VECTOR(?, DOUBLE))</code> returns
+similarity score (0-1) - HNSW index: <code>As %SQL.Index.HNSW</code> —
+accelerates ORDER BY Score DESC queries</p>
+<p>From Story 3.1: - <code>%AI.Tool</code> pattern: ClassMethod with
+<code>///</code> doc comments, returns <code>%String</code> (JSON) -
+Tool delegation: <code>Return ##class(ClassName).Method(args)</code> -
+ToolSet <code>%Discover()</code> returns JSON with all tool schemas</p>
+<p>From Story 3.3: - ToolSet XData:
+<code>&lt;Include Class="SNOMED.Tools.ClassName"/&gt;</code> XML element
+- After ToolSet recompile, <code>%Discover()</code> auto-picks up new
+tools</p>
+<h3 id="references">References</h3>
+<ul>
+<li>[Source: _bmad-output/planning-artifacts/epics.md#Story 4.3]</li>
+<li>[Source:
+_bmad-output/planning-artifacts/research/technical-iris-for-health-ai-hub-snomed-ct-port-research-2026-05-13.md
+— lines 296-325: SQL Vector Syntax]</li>
+<li>[Source: src/SNOMED/Search.cls — existing class to modify]</li>
+<li>[Source: src/SNOMED/Tools/Lookup.cls — %AI.Tool pattern
+reference]</li>
+<li>[Source: src/SNOMED/ToolSet.cls — XData to update]</li>
+</ul>
+<h2 id="dev-agent-record">Dev Agent Record</h2>
+<h3 id="agent-model-used">Agent Model Used</h3>
+<p>Claude Opus 4.6</p>
+<h3 id="debug-log-references">Debug Log References</h3>
+<ul>
+<li><code>%Discover()</code> is an instance method on ToolSet (not class
+method) — returns <code>%DynamicObject</code></li>
+<li>VECTOR_COSINE correctly filters: identical=1.0, similar=0.86,
+dissimilar=0.47 (below 0.5 threshold)</li>
+<li>Tool wrapper delegation via
+<code>##class(SNOMED.Search).Semantic(query, maxResults)</code> works
+correctly</li>
+<li>Error handling returns JSON <code>{"error": "..."}</code> when
+Ollama unreachable — consistent with tool pattern</li>
+</ul>
+<h3 id="completion-notes-list">Completion Notes List</h3>
+<ul>
+<li>Added <code>Semantic()</code> Python classmethod to existing
+<code>SNOMED.Search</code> class</li>
+<li>Created <code>SNOMED.Tools.Semantic</code> extending
+<code>%AI.Tool</code> with
+<code>SemanticSearch(query, maxResults)</code> method</li>
+<li>Updated <code>SNOMED.ToolSet</code> XData to include
+<code>SNOMED.Tools.Semantic</code></li>
+<li>ToolSet now discovers 9 tools (was 8): GetConcept, LexicalSearch,
+SearchByPattern, GetAncestors, GetChildren, GetDescendants, GetParents,
+IsA, SemanticSearch</li>
+<li>Verified: error JSON on Ollama connection failure, vector similarity
+scoring with threshold filtering, tool delegation chain</li>
+</ul>
+<h3 id="file-list">File List</h3>
+<ul>
+<li>src/SNOMED/Search.cls (MODIFIED — added Semantic method)</li>
+<li>src/SNOMED/Tools/Semantic.cls (NEW)</li>
+<li>src/SNOMED/ToolSet.cls (MODIFIED — added Include for Semantic)</li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,53 @@
+# iris-mcp-server configuration for SNOMED CT tools
+# Copy this file and adjust host/credentials for your environment.
+# See: https://docs.intersystems.com/iris-ai-hub/mcp-server
+
+[mcp]
+# Transport mode: "stdio" for Claude Desktop, "http" for remote clients
+transport = "stdio"
+
+[[iris]]
+# Connection name (arbitrary label)
+name = "local"
+
+[iris.server]
+# IRIS SuperServer connection details
+host = "localhost"
+port = 1972
+username = "CSPSystem"
+password = "SYS"
+
+[iris.pool]
+# WebSocket connection pool sizing
+min = 2
+max = 5
+
+[[iris.endpoints]]
+# MCP endpoint path registered in IRIS
+path = "/mcp/snomed"
+
+[logging]
+# Logging configuration
+level = "info"
+output = "file"
+file = "iris-mcp-snomed.log"
+
+# Claude Desktop configuration (add to ~/Library/Application Support/Claude/claude_desktop_config.json):
+# {
+#   "mcpServers": {
+#     "snomed": {
+#       "command": "/path/to/iris-mcp-server",
+#       "args": ["--config=/path/to/config.toml", "run"]
+#     }
+#   }
+# }
+#
+# Claude Code configuration (add to ~/.claude/settings.json):
+# {
+#   "mcpServers": {
+#     "snomed": {
+#       "command": "/path/to/iris-mcp-server",
+#       "args": ["--config=/path/to/config.toml", "run"]
+#     }
+#   }
+# }

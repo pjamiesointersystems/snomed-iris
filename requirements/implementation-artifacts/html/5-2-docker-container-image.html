@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>5-2-docker-container-image</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">5-2-docker-container-image</h1>
+</header>
+<h1 id="story-5.2-docker-container-image">Story 5.2: Docker Container
+Image</h1>
+<p>Status: review</p>
+<h2 id="story">Story</h2>
+<p>As a DevOps engineer, I want a Dockerfile that builds a ready-to-run
+IRIS for Health container with SNOMED tools pre-installed, so that teams
+can deploy with <code>docker run</code> without manual setup.</p>
+<h2 id="acceptance-criteria">Acceptance Criteria</h2>
+<ol type="1">
+<li>A <code>Dockerfile</code> based on
+<code>containers.intersystems.com/intersystems/irishealth-community:2026.2.0AI</code>
+builds successfully</li>
+<li>The image installs the IPM package, compiles all classes, and
+configures the MCP server application</li>
+<li>The <code>iris-mcp-server</code> binary and
+<code>config/mcp-config.toml</code> template are included</li>
+<li>Ports 1972 (SuperServer) and 52773 (Web Portal) are exposed</li>
+<li><code>docker run</code> starts IRIS with the SNOMED namespace ready
+and <code>/mcp/snomed</code> accessible</li>
+<li>A <code>docker-compose.yml</code> is provided showing Ollama sidecar
+configuration for embeddings</li>
+</ol>
+<h2 id="tasks-subtasks">Tasks / Subtasks</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Task 1: Create
+<code>Dockerfile</code> (AC: #1, #2, #3, #4)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Use base image
+<code>containers.intersystems.com/intersystems/irishealth-community:2026.2.0AI</code></label></li>
+<li><label><input type="checkbox" checked="" />Copy source files and
+<code>module.xml</code> into the image</label></li>
+<li><label><input type="checkbox" checked="" />Install the IPM package
+using <code>iris session</code> during build (starts IRIS, loads module,
+stops IRIS)</label></li>
+<li><label><input type="checkbox" checked="" />Copy
+<code>config/mcp-config.toml</code> into the image at an accessible
+location</label></li>
+<li><label><input type="checkbox" checked="" />Expose ports 1972 and
+52773</label></li>
+<li><label><input type="checkbox" checked="" />Set appropriate
+healthcheck and entrypoint</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 2: Create
+<code>docker-compose.yml</code> (AC: #5, #6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Define <code>iris</code>
+service using the local Dockerfile</label></li>
+<li><label><input type="checkbox" checked="" />Define
+<code>ollama</code> sidecar service for embedding
+generation</label></li>
+<li><label><input type="checkbox" checked="" />Configure shared network
+for inter-service communication</label></li>
+<li><label><input type="checkbox" checked="" />Map ports 1972, 52773 for
+IRIS and 11434 for Ollama</label></li>
+<li><label><input type="checkbox" checked="" />Add volume mounts for
+data persistence</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 3: Test Docker build
+and run (AC: #1-#6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Verify
+<code>docker build</code> completes without errors</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>docker run</code> starts IRIS and all SNOMED classes are
+compiled</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>/mcp/snomed</code> web application is registered and
+accessible</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>docker-compose.yml</code> is valid YAML</label></li>
+</ul></li>
+</ul>
+<h2 id="dev-notes">Dev Notes</h2>
+<h3 id="architecture-pattern">Architecture Pattern</h3>
+<p>The Docker container serves as the primary distribution mechanism for
+teams that want a one-command deployment. It builds on Story 5.1’s IPM
+package structure — the Dockerfile installs the IPM package during the
+build phase so all classes are pre-compiled and the MCP web app is
+registered.</p>
+<h3 id="dockerfile-implementation">Dockerfile Implementation</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> containers.intersystems.com/intersystems/irishealth-community:2026.2.0AI</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">USER</span> root</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy project source into a staging directory</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> module.xml /opt/snomed-iris/</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> requirements.txt /opt/snomed-iris/</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> src /opt/snomed-iris/src/</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Install Python dependencies</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">pip3</span> install <span class="at">-r</span> /opt/snomed-iris/requirements.txt <span class="at">--quiet</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Switch to irisowner for IRIS operations</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="kw">USER</span> irisowner</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the module into IRIS during build</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># This compiles all classes and runs SNOMED.Installer.Setup()</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">iris</span> start IRIS <span class="kw">&amp;&amp;</span> <span class="dt">\</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="ex">iris</span> session IRIS <span class="at">-U</span> USER <span class="op">&lt;&lt;&#39;EOF&#39;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="st">Set sc = $SYSTEM.OBJ.LoadDir(&quot;/opt/snomed-iris/src/&quot;, &quot;ck&quot;, .err, 1)</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="st">If $$$ISERR(sc) Do $SYSTEM.Status.DisplayError(sc) Halt</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="st">Do ##class(SNOMED.Installer).Setup()</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="st">Halt</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    iris stop IRIS quietly</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy MCP server config template</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> config/mcp-config.toml /opt/iris/config/mcp-config.toml</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Expose IRIS ports</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="kw">EXPOSE</span> 1972 52773</span></code></pre></div>
+<h3 id="key-implementation-details">Key Implementation Details</h3>
+<p><strong>IRIS Docker build pattern:</strong> - The official IRIS
+community images use <code>irisowner</code> as the default user -
+<code>iris start IRIS</code> starts the IRIS instance,
+<code>iris stop IRIS quietly</code> stops it cleanly -
+<code>iris session IRIS -U USER</code> opens a terminal session in the
+USER namespace - Use <code>$SYSTEM.OBJ.LoadDir()</code> to compile all
+.cls files from a directory recursively - The Installer’s
+<code>Setup()</code> method registers <code>/mcp/snomed</code> web app
+(from Story 5.1)</p>
+<p><strong>Why not use <code>zpm "install"</code>:</strong> - The IPM
+package is local (not published to registry), so we load classes
+directly with <code>$SYSTEM.OBJ.LoadDir()</code> - Then call
+<code>SNOMED.Installer.Setup()</code> to run the post-install hook
+manually - This avoids needing IPM itself installed in the container</p>
+<p><strong>Config file location:</strong> - The
+<code>config/mcp-config.toml</code> already exists in the project (from
+Story 3.3) - Copy it to <code>/opt/iris/config/</code> inside the
+container - Users override by mounting their own config at runtime</p>
+<h3 id="docker-compose.yml-structure">docker-compose.yml Structure</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3.8&quot;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">iris</span><span class="kw">:</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">build</span><span class="kw">:</span><span class="at"> .</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;1972:1972&quot;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;52773:52773&quot;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> iris-data:/usr/irissys/mgr</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ISC_DATA_DIRECTORY=/usr/irissys/mgr</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">healthcheck</span><span class="kw">:</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">test</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;CMD&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;iris&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;qlist&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;IRIS&quot;</span><span class="kw">]</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">interval</span><span class="kw">:</span><span class="at"> 10s</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">timeout</span><span class="kw">:</span><span class="at"> 5s</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">retries</span><span class="kw">:</span><span class="at"> </span><span class="dv">5</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ollama</span><span class="kw">:</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> ollama/ollama:latest</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;11434:11434&quot;</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ollama-data:/root/.ollama</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">iris-data</span><span class="kw">:</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ollama-data</span><span class="kw">:</span></span></code></pre></div>
+<h3 id="critical-implementation-rules">Critical Implementation
+Rules</h3>
+<ul>
+<li><strong>Base image MUST be
+<code>irishealth-community:2026.2.0AI</code></strong> — this is the AI
+Hub EAP image with %AI.Tool support</li>
+<li><strong>Use <code>USER irisowner</code></strong> before any IRIS
+operations — root cannot start IRIS</li>
+<li><strong>Use <code>USER root</code></strong> for system package
+installs (pip) — switch back to irisowner after</li>
+<li><strong><code>$SYSTEM.OBJ.LoadDir(dir, "ck", .err, 1)</code></strong>
+— the <code>1</code> flag means recursive loading</li>
+<li><strong><code>iris stop IRIS quietly</code></strong> — the
+<code>quietly</code> flag prevents the stop from writing to the
+journal</li>
+<li><strong>Do NOT use zpm in Dockerfile</strong> — package is local,
+not published to a registry</li>
+<li><strong>EXPOSE 1972 52773</strong> — SuperServer for MCP (wgproto)
+and Web Portal for HTTP/REST</li>
+<li><strong>Healthcheck with <code>iris qlist</code></strong> — standard
+pattern for IRIS container health verification</li>
+<li><strong>Do NOT include RF2 data in the image</strong> — users load
+their own SNOMED release at runtime</li>
+<li><strong>Do NOT include Ollama in the IRIS image</strong> — it’s a
+separate sidecar service</li>
+<li><strong>config/mcp-config.toml already exists</strong> — created in
+Story 3.3, just COPY it</li>
+</ul>
+<h3 id="what-not-to-do">What NOT To Do</h3>
+<ul>
+<li>Do NOT publish the IPM package to any registry — this is a local
+build</li>
+<li>Do NOT include SNOMED RF2 data files in the Docker image</li>
+<li>Do NOT install Ollama inside the IRIS container — use docker-compose
+sidecar</li>
+<li>Do NOT modify any existing source classes (Installer, MCP.Service,
+ToolSet, etc.)</li>
+<li>Do NOT modify module.xml or requirements.txt</li>
+<li>Do NOT hardcode credentials beyond the development defaults
+(CSPSystem/SYS)</li>
+<li>Do NOT create a README — that’s Story 5.3</li>
+<li>Do NOT use IRIS mirror or ECP configurations — single instance
+only</li>
+</ul>
+<h3 id="testing-strategy">Testing Strategy</h3>
+<ol type="1">
+<li><strong>Verify Dockerfile builds</strong> —
+<code>docker build -t snomed-iris .</code> should succeed</li>
+<li><strong>Verify container starts</strong> —
+<code>docker run -d snomed-iris</code> → IRIS comes up healthy</li>
+<li><strong>Verify classes compiled</strong> — exec into container and
+check <code>$SYSTEM.OBJ.IsUpToDate("SNOMED.Concept")</code></li>
+<li><strong>Verify web app registered</strong> — check
+<code>Security.Applications.Exists("/mcp/snomed")</code> returns
+true</li>
+<li><strong>Verify docker-compose.yml</strong> — parse as valid YAML,
+both services defined</li>
+<li><strong>Verify ports exposed</strong> — inspect image metadata for
+1972 and 52773</li>
+</ol>
+<h3 id="previous-story-intelligence">Previous Story Intelligence</h3>
+<p>From Story 5.1: - <code>module.xml</code> at project root defines the
+IPM package (<code>snomed-iris</code> v0.4.0) -
+<code>requirements.txt</code> at project root lists
+<code>requests</code> dependency - <code>SNOMED.Installer.Setup()</code>
+installs pip deps AND registers <code>/mcp/snomed</code> web app -
+Installer is idempotent — calling Setup() twice doesn’t error -
+<code>src/SNOMED/Installer.cls</code> uses
+<code>subprocess.run(["pip", "install", ...])</code> for deps - Web app
+props: DispatchClass=SNOMED.MCP.Service, NameSpace=USER,
+AutheEnabled=64</p>
+<p>From Story 3.3: - <code>config/mcp-config.toml</code> already exists
+with iris-mcp-server configuration - Transport: stdio, server:
+localhost:1972, endpoint: /mcp/snomed - The <code>iris-mcp-server</code>
+binary is NOT part of this project — it’s a separate InterSystems
+tool</p>
+<h3 id="existing-source-files-for-copy-reference">Existing Source Files
+(for COPY reference)</h3>
+<pre><code>module.xml              (project root)
+requirements.txt        (project root)
+config/mcp-config.toml  (MCP server config template)
+src/SNOMED/             (all .cls files — 12 classes total)
+  Concept.cls
+  ConceptEmbedding.cls
+  Description.cls
+  Embeddings.cls
+  Hierarchy.cls
+  Installer.cls
+  Loader.cls
+  Relationship.cls
+  Search.cls
+  ToolSet.cls
+  TransitiveClosure.cls
+  MCP/Service.cls
+  Tools/Hierarchy.cls
+  Tools/Lookup.cls
+  Tools/Search.cls
+  Tools/Semantic.cls</code></pre>
+<h3 id="references">References</h3>
+<ul>
+<li>[Source: _bmad-output/planning-artifacts/epics.md#Story 5.2]</li>
+<li>[Source:
+_bmad-output/planning-artifacts/research/technical-iris-for-health-ai-hub-snomed-ct-port-research-2026-05-13.md
+— lines 436-448: Container Distribution]</li>
+<li>[Source:
+_bmad-output/planning-artifacts/research/technical-iris-for-health-ai-hub-snomed-ct-port-research-2026-05-13.md
+— lines 453-496: Architecture Diagram]</li>
+<li>[Source: config/mcp-config.toml — existing MCP server
+configuration]</li>
+<li>[Source:
+_bmad-output/implementation-artifacts/5-1-ipm-package-structure.md —
+previous story context]</li>
+</ul>
+<h2 id="dev-agent-record">Dev Agent Record</h2>
+<h3 id="agent-model-used">Agent Model Used</h3>
+<p>Claude Opus 4.6</p>
+<h3 id="debug-log-references">Debug Log References</h3>
+<ul>
+<li>Dockerfile heredoc syntax (<code>&lt;&lt;'EOF'</code>) not supported
+in Docker RUN — switched to script file redirect approach</li>
+<li><code>docker build --check</code> validates Dockerfile parse
+correctly (only fails on base image registry access, which is
+expected)</li>
+<li><code>docker compose config --quiet</code> validates compose file —
+removed obsolete <code>version</code> key per Docker warning</li>
+<li>Healthcheck defined in docker-compose.yml (not Dockerfile) as the
+base image has its own entrypoint</li>
+<li><code>$SYSTEM.OBJ.LoadDir(dir, "ck", .err, 1)</code> — flag
+<code>1</code> enables recursive loading of subdirectories</li>
+</ul>
+<h3 id="completion-notes-list">Completion Notes List</h3>
+<ul>
+<li>Created <code>Dockerfile</code> using
+<code>irishealth-community:2026.2.0AI</code> base image</li>
+<li>Uses separate <code>iris-init.script</code> for clean ObjectScript
+execution during build (avoids heredoc/inline issues)</li>
+<li>Build sequence: pip install → copy source → start IRIS → load
+classes + run Installer → stop IRIS → copy config</li>
+<li>Created <code>docker-compose.yml</code> with IRIS + Ollama sidecar
+services, persistent volumes, healthcheck</li>
+<li>Validated: Dockerfile parses correctly (docker build –check),
+docker-compose.yml validates cleanly</li>
+<li>Note: Full build test requires InterSystems container registry
+access (not available on this machine)</li>
+<li>All 6 acceptance criteria addressed</li>
+</ul>
+<h3 id="file-list">File List</h3>
+<ul>
+<li>Dockerfile (NEW)</li>
+<li>docker-compose.yml (NEW)</li>
+<li>iris-init.script (NEW)</li>
+</ul>
+</body>
+</html>

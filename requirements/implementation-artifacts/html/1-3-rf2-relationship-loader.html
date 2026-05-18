@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>1-3-rf2-relationship-loader</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">1-3-rf2-relationship-loader</h1>
+</header>
+<h1 id="story-1.3-rf2-relationship-loader">Story 1.3: RF2 Relationship
+Loader</h1>
+<p>Status: review</p>
+<h2 id="story">Story</h2>
+<p>As a terminology administrator, I want to load SNOMED CT relationship
+RF2 files into IRIS, so that hierarchical and associative relationships
+are available for querying.</p>
+<h2 id="acceptance-criteria">Acceptance Criteria</h2>
+<ol type="1">
+<li><code>SNOMED.Loader.LoadRelationships(filepath)</code> inserts all
+rows from an RF2 relationship file into <code>SNOMED.Relationship</code>
+via SQL prepared statements</li>
+<li>Processing is streamed line-by-line (no full dataset in memory)</li>
+<li>Progress is reported every 50,000 records</li>
+<li>Only active IS-A relationships (typeId = <code>116680003</code>) are
+flagged for hierarchy use (printed in summary)</li>
+<li>Querying <code>SNOMED.Relationship</code> by SourceId or
+DestinationId returns results efficiently via indexed lookups</li>
+<li>Invalid or missing filepath returns a meaningful error status</li>
+<li><code>TruncateAll</code> is updated to also truncate the
+Relationship table</li>
+</ol>
+<h2 id="tasks-subtasks">Tasks / Subtasks</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Task 1: Add
+<code>LoadRelationships</code> method to <code>SNOMED.Loader</code> (AC:
+#1, #2, #3, #4, #6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Implement
+<code>LoadRelationships(filepath)</code> as
+<code>[ Language = python ]</code> method</label></li>
+<li><label><input type="checkbox" checked="" />Use
+<code>iris.sql.prepare()</code> with parameterized INSERT for
+SNOMED.Relationship</label></li>
+<li><label><input type="checkbox" checked="" />Map RF2 columns:
+id→RelationshipId, sourceId→SourceId, destinationId→DestinationId,
+typeId→TypeId, active→Active,
+relationshipGroup→RelationshipGroup</label></li>
+<li><label><input type="checkbox" checked="" />Stream line-by-line,
+progress every 50,000 records</label></li>
+<li><label><input type="checkbox" checked="" />Track IS-A count (rows
+where typeId == “116680003” and active == “1”) and print in
+summary</label></li>
+<li><label><input type="checkbox" checked="" />Validate filepath exists;
+return error status if missing</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 2: Update
+<code>TruncateAll</code> to include Relationship table (AC: #7)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Add
+<code>TRUNCATE TABLE SNOMED.Relationship</code> to TruncateAll
+method</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 3: Create test
+fixture and verify in Docker (AC: #1, #5)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Create
+<code>tests/fixtures/rf2/sct2_Relationship_Snapshot_Test.txt</code> with
+5 rows (mix of IS-A and non-IS-A)</label></li>
+<li><label><input type="checkbox" checked="" />Compile updated
+Loader.cls in IRIS container</label></li>
+<li><label><input type="checkbox" checked="" />Load test fixture and
+verify row count</label></li>
+<li><label><input type="checkbox" checked="" />Verify indexed lookup by
+SourceId returns correct results</label></li>
+<li><label><input type="checkbox" checked="" />Verify IS-A count
+reported correctly</label></li>
+</ul></li>
+</ul>
+<h2 id="dev-notes">Dev Notes</h2>
+<h3 id="architecture-pattern">Architecture Pattern</h3>
+<p>This adds a method to the <strong>existing</strong>
+<code>src/SNOMED/Loader.cls</code> class (created in Story 1.2). Same
+Embedded Python pattern — <code>[ Language = python ]</code> classmethod
+using <code>iris.sql.prepare()</code>.</p>
+<h3 id="rf2-relationship-file-format">RF2 Relationship File Format</h3>
+<p><strong>File:</strong> <code>sct2_Relationship_Snapshot_*.txt</code>
+(or <code>sct2_StatedRelationship_Snapshot_*.txt</code>)</p>
+<pre><code>id  effectiveTime   active  moduleId    sourceId    destinationId   relationshipGroup   typeId  characteristicTypeId    modifierId</code></pre>
+<p>Column mapping to our schema: - Column 0: <code>id</code> →
+RelationshipId (string SCTID) - Column 1: <code>effectiveTime</code> →
+(not stored) - Column 2: <code>active</code> → Active (0/1 → integer) -
+Column 3: <code>moduleId</code> → (not stored) - Column 4:
+<code>sourceId</code> → SourceId (string SCTID) - Column 5:
+<code>destinationId</code> → DestinationId (string SCTID) - Column 6:
+<code>relationshipGroup</code> → RelationshipGroup (integer) - Column 7:
+<code>typeId</code> → TypeId (string SCTID) - Column 8:
+<code>characteristicTypeId</code> → (not stored) - Column 9:
+<code>modifierId</code> → (not stored)</p>
+<h3 id="key-constants">Key Constants</h3>
+<ul>
+<li>IS-A type: <code>116680003</code> — identifies parent-child
+hierarchy relationships</li>
+<li>The AC says “flagged for hierarchy use” — this means tracking the
+count in the summary output, NOT creating a separate flag column</li>
+</ul>
+<h3 id="implementation-code-pattern">Implementation Code Pattern</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ClassMethod LoadRelationships(filepath As <span class="op">%</span>String) As <span class="op">%</span>Status [ Language <span class="op">=</span> python ]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> iris</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> os</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> csv</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> os.path.isfile(filepath):</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> iris.cls(<span class="st">&quot;%SYSTEM.Status&quot;</span>).Error(<span class="dv">5001</span>, <span class="ss">f&quot;File not found: </span><span class="sc">{</span>filepath<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    sql <span class="op">=</span> iris.sql.prepare(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;INSERT INTO SNOMED.Relationship (RelationshipId, SourceId, DestinationId, TypeId, Active, RelationshipGroup) &quot;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;VALUES (?, ?, ?, ?, ?, ?)&quot;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(filepath, <span class="st">&#39;r&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;utf-8&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        reader <span class="op">=</span> csv.DictReader(f, delimiter<span class="op">=</span><span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        isa_count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> row <span class="kw">in</span> reader:</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            active <span class="op">=</span> <span class="bu">int</span>(row[<span class="st">&#39;active&#39;</span>])</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>            type_id <span class="op">=</span> row[<span class="st">&#39;typeId&#39;</span>]</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>            sql.execute(row[<span class="st">&#39;id&#39;</span>], row[<span class="st">&#39;sourceId&#39;</span>], row[<span class="st">&#39;destinationId&#39;</span>],</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>                       type_id, active, <span class="bu">int</span>(row[<span class="st">&#39;relationshipGroup&#39;</span>]))</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>            count <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> active <span class="op">==</span> <span class="dv">1</span> <span class="kw">and</span> type_id <span class="op">==</span> <span class="st">&quot;116680003&quot;</span>:</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                isa_count <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> count <span class="op">%</span> <span class="dv">50000</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>                <span class="bu">print</span>(<span class="ss">f&quot;  Loaded </span><span class="sc">{</span>count<span class="sc">}</span><span class="ss"> relationships...&quot;</span>)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Total: </span><span class="sc">{</span>count<span class="sc">}</span><span class="ss"> relationships loaded (</span><span class="sc">{</span>isa_count<span class="sc">}</span><span class="ss"> active IS-A)&quot;</span>)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> iris.cls(<span class="st">&quot;%SYSTEM.Status&quot;</span>).OK()</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="critical-rules">Critical Rules</h3>
+<ul>
+<li><strong>ALL relationships are loaded</strong> (not just IS-A) — the
+full relationship table is needed for non-hierarchical queries too</li>
+<li><strong>IS-A tracking is informational</strong> — print the count in
+summary, used by Story 2.2 (Transitive Closure) to know how many
+hierarchy edges exist</li>
+<li><strong><code>relationshipGroup</code> is an integer</strong> —
+convert with <code>int()</code> before passing to SQL</li>
+<li><strong>Same patterns as Story 1.2</strong> — streaming, prepared
+statements, error handling, progress reporting</li>
+<li><strong>Update TruncateAll</strong> — must include Relationship
+table so full re-loads work cleanly</li>
+</ul>
+<h3 id="existing-code-to-modify">Existing Code to Modify</h3>
+<p>File: <code>src/SNOMED/Loader.cls</code> - Add
+<code>LoadRelationships</code> method after
+<code>LoadDescriptions</code> - Update <code>TruncateAll</code> to add
+<code>TRUNCATE TABLE SNOMED.Relationship</code></p>
+<h3 id="target-table-schema-from-story-1.1">Target Table Schema (from
+Story 1.1)</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- SNOMED.Relationship columns: ID, Active, DestinationId, RelationshipGroup, RelationshipId, SourceId, TypeId</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">-- Indexes: RelationshipIdIdx (unique), SourceIdIdx, DestinationIdIdx, TypeIdIdx</span></span></code></pre></div>
+<h3 id="testing-approach">Testing Approach</h3>
+<p>Same as Story 1.2: copy to Docker, compile, load fixture, verify via
+SQL.</p>
+<p>Test fixture should include: - 3 IS-A relationships
+(typeId=116680003), 2 active + 1 inactive - 2 non-IS-A relationships
+(e.g., finding site typeId=363698007) - This tests that all are loaded
+but only active IS-A are counted</p>
+<h3 id="references">References</h3>
+<ul>
+<li>[Source: _bmad-output/planning-artifacts/epics.md#Story 1.3]</li>
+<li>[Source: src/rf2.rs lines 232-249 — RF2 relationship column
+positions]</li>
+<li>[Source: src/SNOMED/Loader.cls — existing class to modify]</li>
+<li>[Source: src/SNOMED/Relationship.cls — target table schema]</li>
+</ul>
+<h2 id="dev-agent-record">Dev Agent Record</h2>
+<h3 id="agent-model-used">Agent Model Used</h3>
+<p>Claude Opus 4.6</p>
+<h3 id="debug-log-references">Debug Log References</h3>
+<p>N/A</p>
+<h3 id="completion-notes-list">Completion Notes List</h3>
+<ul>
+<li>Added <code>LoadRelationships</code> method to existing
+<code>SNOMED.Loader</code> class</li>
+<li>Maps 6 RF2 columns (RelationshipId, SourceId, DestinationId, TypeId,
+Active, RelationshipGroup)</li>
+<li>Tracks active IS-A relationships (typeId=116680003) and reports
+count in summary</li>
+<li>Updated <code>TruncateAll</code> to include SNOMED.Relationship
+table</li>
+<li>Verified in Docker:
+<ul>
+<li>5 rows loaded (3 IS-A: 2 active + 1 inactive, 2 non-IS-A)</li>
+<li>IS-A count correctly reported as 2 (only active ones)</li>
+<li>SourceId indexed lookup returns correct results (46635009 → 2
+relationships)</li>
+<li>TruncateAll clears all 3 tables</li>
+</ul></li>
+</ul>
+<h3 id="file-list">File List</h3>
+<ul>
+<li>src/SNOMED/Loader.cls (MODIFIED — added LoadRelationships, updated
+TruncateAll)</li>
+<li>tests/fixtures/rf2/sct2_Relationship_Snapshot_Test.txt (NEW)</li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2026-05-13" />
+  <title>IRIS AI Hub SNOMED CT Port - Technical Research</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {  background-color: #f8f8f8; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ef2929; } /* Alert */
+    code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #204a87; } /* Attribute */
+    code span.bn { color: #0000cf; } /* BaseN */
+    code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4e9a06; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #8f5902; font-style: italic; } /* Comment */
+    code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+    code span.dt { color: #204a87; } /* DataType */
+    code span.dv { color: #0000cf; } /* DecVal */
+    code span.er { color: #a40000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #0000cf; } /* Float */
+    code span.fu { color: #204a87; font-weight: bold; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+    code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+    code span.ot { color: #8f5902; } /* Other */
+    code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+    code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+    code span.ss { color: #4e9a06; } /* SpecialString */
+    code span.st { color: #4e9a06; } /* String */
+    code span.va { color: #000000; } /* Variable */
+    code span.vs { color: #4e9a06; } /* VerbatimString */
+    code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="data:text/css,body{font-family:Helvetica,Arial,sans-serif;max-width:900px;margin:40px auto;padding:0 20px;font-size:14px;line-height:1.6}table{border-collapse:collapse;width:100%}th,td{border:1px solid %23ddd;padding:8px;text-align:left}th{background:%23f5f5f5}code{background:%23f4f4f4;padding:2px 5px;border-radius:3px;font-size:13px}pre{background:%23f4f4f4;padding:16px;border-radius:5px;overflow-x:auto}h1,h2,h3{color:%23333}h1{border-bottom:2px solid %23333;padding-bottom:10px}h2{border-bottom:1px solid %23ccc;padding-bottom:5px}" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">IRIS AI Hub SNOMED CT Port - Technical Research</h1>
+<p class="date">2026-05-13</p>
+</header>
+<h1
+id="technical-research-report-porting-snomed-ct-toolchain-to-intersystems-iris-for-health-ai-hub">Technical
+Research Report: Porting SNOMED CT Toolchain to InterSystems IRIS for
+Health AI Hub</h1>
+<p><strong>Date:</strong> 2026-05-13 <strong>Author:</strong> Pjamieso
+<strong>Research Type:</strong> Technical Architecture &amp;
+Feasibility</p>
+<hr />
+<h2 id="executive-summary">Executive Summary</h2>
+<p>The InterSystems AI Hub EAP (2026.2.0AI) provides a compelling
+platform for porting the <code>sct</code> SNOMED CT toolchain. The
+platform offers a <strong>Rust-based MCP server</strong>
+(<code>iris-mcp-server</code>) that bridges LLM clients to IRIS business
+logic, a mature <strong>ObjectScript AI SDK</strong>
+(<code>%AI.Agent</code>, <code>%AI.ToolSet</code>,
+<code>%AI.Provider</code>), <strong>Embedded Python</strong> for
+leveraging Python libraries, and native <strong>VECTOR</strong> SQL type
+for semantic search. IRIS for Health does NOT provide native SNOMED CT
+management out of the box - this is a gap your tool can fill. The
+recommended approach is a hybrid ObjectScript/Python implementation
+packaged via IPM, exposing SNOMED operations as MCP tools.</p>
+<hr />
+<h2 id="iris-for-health-snomed-ct-terminology-management">1. IRIS for
+Health SNOMED CT Terminology Management</h2>
+<h3 id="what-iris-provides-natively">What IRIS Provides Natively</h3>
+<p><strong>Confidence: HIGH</strong> (based on documentation structure
+analysis and community knowledge)</p>
+<p>IRIS for Health provides: - <strong>FHIR R4 Server</strong> with
+terminology service endpoints (<code>$lookup</code>,
+<code>$validate-code</code>, <code>$expand</code>) - <strong>Coded Entry
+Registry</strong> for managing code systems - A <strong>generic
+terminology services framework</strong> but NOT a pre-built SNOMED CT
+implementation</p>
+<h3 id="what-iris-does-not-provide">What IRIS Does NOT Provide</h3>
+<ul>
+<li>No pre-loaded SNOMED CT content</li>
+<li>No native RF2 parser</li>
+<li>No built-in transitive closure table for SNOMED hierarchy</li>
+<li>No SNOMED-specific subsumption testing (<code>$subsumes</code>)</li>
+<li>No SNOMED Expression Constraint Language (ECL) support</li>
+</ul>
+<h3 id="implication-for-your-port">Implication for Your Port</h3>
+<p>Your <code>sct</code> tool fills a genuine gap. You would need to: 1.
+Build RF2 ingestion (Python is ideal for parsing) 2. Store concepts in
+IRIS persistent classes or globals 3. Build transitive closure in
+globals (IRIS globals are excellent for graph structures) 4. Expose FHIR
+terminology operations via the existing FHIR server framework 5. Expose
+search/hierarchy operations as MCP tools</p>
+<h3 id="storage-architecture-options">Storage Architecture Options</h3>
+<table>
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 27%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SQL Tables</strong> (<code>%Persistent</code> classes)</td>
+<td>Standard queries, FTS via SQL, familiar</td>
+<td>Slower hierarchy traversal</td>
+</tr>
+<tr>
+<td><strong>Globals directly</strong></td>
+<td>Fastest traversal, natural for hierarchies, minimal overhead</td>
+<td>Less portable, no SQL access</td>
+</tr>
+<tr>
+<td><strong>Hybrid: SQL + Global indexes</strong></td>
+<td>Best of both: SQL for search, globals for hierarchy</td>
+<td>More complex to maintain</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommended:</strong> Hybrid approach -
+<code>%Persistent</code> classes with SQL for concept lookup/search,
+plus dedicated globals for transitive closure
+(<code>^SNOMED.TC(ancestorId, descendantId)=""</code>) enabling O(1)
+subsumption checks.</p>
+<hr />
+<h2 id="ai-hub-mcp-server-architecture">2. AI Hub MCP Server
+Architecture</h2>
+<h3 id="overview">Overview</h3>
+<p><strong>Confidence: VERIFIED</strong> (source:
+<code>MCP_Server_Guide.md</code> from the EAP repo)</p>
+<p>The AI Hub MCP capability is delivered via
+<code>iris-mcp-server</code> - a <strong>standalone Rust binary</strong>
+included in the IRIS <code>bin</code> directory. It acts as a protocol
+gateway between MCP clients (Claude Desktop, Claude Code) and IRIS
+backend tools.</p>
+<h3 id="architecture">Architecture</h3>
+<pre><code>Claude Desktop/Code  --[MCP/JSON-RPC 2.0]--&gt; iris-mcp-server (Rust binary)
+                                                    |
+                                             [wgproto - IRIS native binary protocol]
+                                                    |
+                                             %AI.MCP.Service (ObjectScript)
+                                                    |
+                                             %AI.ToolMgr -&gt; Your Tools/ToolSets</code></pre>
+<h3 id="transport-modes">Transport Modes</h3>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Use Case</th>
+<th>Configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>stdio</strong></td>
+<td>Claude Desktop local</td>
+<td><code>transport = "stdio"</code></td>
+</tr>
+<tr>
+<td><strong>HTTP</strong></td>
+<td>Remote MCP clients</td>
+<td><code>transport = "http"</code>, host/port</td>
+</tr>
+<tr>
+<td><strong>HTTPS</strong></td>
+<td>Production with TLS</td>
+<td><code>transport = "https"</code> + cert/key</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tool-registration-pattern">Tool Registration Pattern</h3>
+<p>Tools are defined in ObjectScript as <code>%AI.Tool</code> or
+<code>%AI.ToolSet</code> subclasses, then exposed via an
+<code>%AI.MCP.Service</code>:</p>
+<pre class="objectscript"><code>// 1. Define tools
+Class SNOMED.Tools.Lookup Extends %AI.Tool
+{
+    /// Look up a SNOMED CT concept by its SCTID.
+    ClassMethod GetConcept(sctid As %String) As %String
+    {
+        // Return JSON with concept details
+    }
+}
+
+// 2. Compose into a ToolSet
+Class SNOMED.ToolSet Extends %AI.ToolSet
+{
+    XData Definition [ MimeType = application/xml ]
+    {
+        &lt;ToolSet Name=&quot;SNOMEDTools&quot;&gt;
+            &lt;Description&gt;SNOMED CT terminology operations&lt;/Description&gt;
+            &lt;Include Class=&quot;SNOMED.Tools.Lookup&quot;/&gt;
+            &lt;Include Class=&quot;SNOMED.Tools.Search&quot;/&gt;
+            &lt;Include Class=&quot;SNOMED.Tools.Hierarchy&quot;/&gt;
+            &lt;Query Name=&quot;SearchConcepts&quot; ... /&gt;
+        &lt;/ToolSet&gt;
+    }
+}
+
+// 3. Create MCP Service
+Class SNOMED.MCP.Service Extends %AI.MCP.Service
+{
+    Parameter SPECIFICATION As STRING = &quot;SNOMED.ToolSet&quot;;
+}</code></pre>
+<p>Then register in Management Portal: <strong>System Administration
+&gt; Security &gt; Applications &gt; MCP Servers</strong> with path
+<code>/mcp/snomed</code>.</p>
+<h3 id="configuration-config.toml-for-claude-desktop">Configuration
+(config.toml for Claude Desktop)</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode toml"><code class="sourceCode toml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[mcp]</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">transport</span> <span class="op">=</span> <span class="st">&quot;stdio&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">[[iris]]</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="dt">name</span>   <span class="op">=</span> <span class="st">&quot;local&quot;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="dt">server</span> <span class="op">=</span> <span class="op">{ </span><span class="dt">host</span><span class="op"> =</span> <span class="st">&quot;localhost&quot;</span><span class="op">, </span><span class="dt">port</span><span class="op"> =</span> <span class="dv">1972</span><span class="op">, </span><span class="dt">username</span><span class="op"> =</span> <span class="st">&quot;CSPSystem&quot;</span><span class="op">, </span><span class="dt">password</span><span class="op"> =</span> <span class="st">&quot;SYS&quot;</span><span class="op"> }</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="dt">pool</span>   <span class="op">=</span> <span class="op">{ </span><span class="dt">min</span><span class="op"> =</span> <span class="dv">2</span><span class="op">, </span><span class="dt">max</span><span class="op"> =</span> <span class="dv">5</span><span class="op"> }</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="dt">endpoints</span> <span class="op">=</span> <span class="op">[</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">{ </span><span class="dt">path</span><span class="op"> =</span> <span class="st">&quot;/mcp/snomed&quot;</span><span class="op"> }</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="kw">[logging]</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="dt">level</span> <span class="op">=</span> <span class="st">&quot;info&quot;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="dt">output</span> <span class="op">=</span> <span class="st">&quot;file&quot;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="dt">file</span> <span class="op">=</span> <span class="st">&quot;iris-mcp-snomed.log&quot;</span></span></code></pre></div>
+<p>Claude Desktop config (<code>claude_desktop_config.json</code>):</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mcpServers&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;snomed&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;/path/to/iris-mcp-server&quot;</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;--config=/path/to/config.toml&quot;</span><span class="ot">,</span> <span class="st">&quot;run&quot;</span><span class="ot">]</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>Service Discovery</strong>: Auto-discovers
+<code>/mcp*</code> endpoints if <code>endpoints</code> omitted</li>
+<li><strong>Tool Refresh</strong>: Background polling every 300s
+(configurable) with ETag-based conditional GET</li>
+<li><strong>Smart Discovery (RAG)</strong>: Semantic search over tool
+descriptions using local embeddings (AllMiniLML6V2)</li>
+<li><strong>Connection Pooling</strong>: WebSocket session pool with
+configurable min/max</li>
+<li><strong>OAuth 2.1</strong>: Supports bearer token passthrough for
+multi-tenant deployments</li>
+<li><strong>RBAC</strong>: IRIS RBAC policies enforced per tool</li>
+<li><strong>Vault Integration</strong>: HashiCorp Vault for secret
+management</li>
+<li><strong>Query-as-Tool</strong>: SQL queries defined as class queries
+automatically become tools with typed parameters</li>
+</ul>
+<h3 id="comparison-with-current-sct-mcp-server">Comparison with Current
+<code>sct</code> MCP Server</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Current <code>sct</code> (Rust/stdio)</th>
+<th>IRIS AI Hub</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transport</td>
+<td>stdio only</td>
+<td>stdio, HTTP, HTTPS</td>
+</tr>
+<tr>
+<td>Tool definition</td>
+<td>Rust code</td>
+<td>ObjectScript XData XML</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>None</td>
+<td>RBAC + OAuth 2.1</td>
+</tr>
+<tr>
+<td>Scalability</td>
+<td>Single process</td>
+<td>Connection pool, multi-server</td>
+</tr>
+<tr>
+<td>Monitoring</td>
+<td>None</td>
+<td>Real-time dashboard, OpenTelemetry</td>
+</tr>
+<tr>
+<td>Smart discovery</td>
+<td>No</td>
+<td>RAG-based tool search</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="objectscript-vs-python-trade-offs">3. ObjectScript vs Python
+Trade-offs</h2>
+<h3 id="how-embedded-python-works">How Embedded Python Works</h3>
+<p><strong>Confidence: HIGH</strong> (verified against documentation
+structure + training knowledge)</p>
+<ul>
+<li>Python runs <strong>in-process</strong> with IRIS (shared memory
+space, no IPC)</li>
+<li>Each IRIS process has its own Python interpreter instance</li>
+<li>GIL is not a bottleneck because IRIS processes are single-threaded
+(parallelism via <code>Job</code>)</li>
+<li><code>[ Language = python ]</code> keyword on methods enables Python
+in class definitions</li>
+</ul>
+<h3 id="language-selection-guide-for-snomed-operations">Language
+Selection Guide for SNOMED Operations</h3>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 37%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Recommended</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RF2 file parsing</strong></td>
+<td>Python</td>
+<td><code>csv</code> module, better string handling, regex</td>
+</tr>
+<tr>
+<td><strong>Bulk loading (INSERT)</strong></td>
+<td>Python + SQL prepared statements</td>
+<td><code>iris.sql.prepare()</code> efficient for 800K+ records</td>
+</tr>
+<tr>
+<td><strong>Global-direct bulk load</strong></td>
+<td>Python <code>iris.gref</code></td>
+<td>Slightly slower than ObjectScript but simpler</td>
+</tr>
+<tr>
+<td><strong>Runtime concept lookup</strong></td>
+<td>ObjectScript</td>
+<td>Zero marshaling overhead per call</td>
+</tr>
+<tr>
+<td><strong>Hierarchy traversal</strong></td>
+<td>ObjectScript</td>
+<td><code>$ORDER</code> on globals is native and fastest</td>
+</tr>
+<tr>
+<td><strong>Transitive closure computation</strong></td>
+<td>Python</td>
+<td>Graph algorithms (networkx if needed)</td>
+</tr>
+<tr>
+<td><strong>FTS/lexical search</strong></td>
+<td>SQL (either language)</td>
+<td>IRIS SQL handles indexing</td>
+</tr>
+<tr>
+<td><strong>Vector similarity search</strong></td>
+<td>SQL (either language)</td>
+<td>IRIS VECTOR type + SQL functions</td>
+</tr>
+<tr>
+<td><strong>MCP Tool definitions</strong></td>
+<td>ObjectScript</td>
+<td>Required by <code>%AI.Tool</code>/<code>%AI.ToolSet</code>
+framework</td>
+</tr>
+<tr>
+<td><strong>External API calls</strong></td>
+<td>Python</td>
+<td><code>requests</code>, better HTTP libraries</td>
+</tr>
+<tr>
+<td><strong>NLP/embedding generation</strong></td>
+<td>Python</td>
+<td><code>sentence_transformers</code>, <code>ollama</code> client</td>
+</tr>
+</tbody>
+</table>
+<h3 id="code-examples">Code Examples</h3>
+<p><strong>Python class method for RF2 loading:</strong></p>
+<pre class="objectscript"><code>Class SNOMED.Loader Extends %RegisteredObject
+{
+
+ClassMethod LoadConcepts(filepath As %String) As %Status [ Language = python ]
+{
+    import iris
+    import csv
+
+    sql = iris.sql.prepare(
+        &quot;INSERT INTO SNOMED.Concept (ConceptId, Active, EffectiveTime, ModuleId, DefinitionStatusId) &quot;
+        &quot;VALUES (?, ?, ?, ?, ?)&quot;
+    )
+
+    with open(filepath, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+        reader = csv.DictReader(f, delimiter=&#39;\t&#39;)
+        count = 0
+        for row in reader:
+            sql.execute(row[&#39;id&#39;], int(row[&#39;active&#39;]), row[&#39;effectiveTime&#39;],
+                       row[&#39;moduleId&#39;], row[&#39;definitionStatusId&#39;])
+            count += 1
+            if count % 50000 == 0:
+                print(f&quot;  Loaded {count} concepts...&quot;)
+
+    print(f&quot;Total: {count} concepts loaded&quot;)
+    return iris.cls(&quot;%SYSTEM.Status&quot;).OK()
+}
+
+}</code></pre>
+<p><strong>ObjectScript for hierarchy traversal:</strong></p>
+<pre class="objectscript"><code>ClassMethod IsDescendantOf(conceptId As %String, ancestorId As %String) As %Boolean
+{
+    // O(1) check against transitive closure global
+    Quit $DATA(^SNOMED.TC(ancestorId, conceptId))#2
+}
+
+ClassMethod GetDescendants(conceptId As %String) As %DynamicArray
+{
+    Set result = []
+    Set desc = &quot;&quot;
+    For {
+        Set desc = $ORDER(^SNOMED.TC(conceptId, desc))
+        Quit:desc=&quot;&quot;
+        Do result.%Push(desc)
+    }
+    Quit result
+}</code></pre>
+<h3 id="performance-expectations">Performance Expectations</h3>
+<ul>
+<li>Simple global SET: ObjectScript ~2-3x faster than Python
+<code>iris.gref</code></li>
+<li>SQL INSERT via prepared statement: Roughly comparable (SQL layer
+dominates)</li>
+<li>Complex string parsing: Python often faster (better regex/string
+libs)</li>
+<li>Bulk <code>%Save()</code>: Similar (persistence layer
+dominates)</li>
+</ul>
+<p><strong>For 831K UK Monolith concepts</strong>: Python + SQL prepared
+statements should load in ~30-60 seconds on modern hardware.
+ObjectScript global-direct would be ~15-30 seconds.</p>
+<hr />
+<h2 id="vectorembedding-support">4. Vector/Embedding Support</h2>
+<h3 id="iris-native-vector-search">IRIS Native Vector Search</h3>
+<p><strong>Confidence: HIGH</strong> (verified from iris-vector-search
+repo and docs references)</p>
+<p>IRIS provides a native <code>VECTOR</code> SQL data type with: -
+<strong>SIMD-accelerated</strong> similarity functions - <strong>ANN
+indexing</strong> for datasets &gt;100K vectors (significant performance
+improvement) - <strong>Hybrid search</strong>: combine vector similarity
+with standard SQL WHERE clauses</p>
+<h3 id="sql-syntax-reconstructed-from-demos-and-docs">SQL Syntax
+(reconstructed from demos and docs)</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Create table with vector column</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> SNOMED.ConceptEmbeddings (</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    ConceptId <span class="dt">VARCHAR</span>(<span class="dv">20</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    Term <span class="dt">VARCHAR</span>(<span class="dv">1024</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    Embedding VECTOR(<span class="dt">DOUBLE</span>, <span class="dv">384</span>),  <span class="co">-- dimension matches model output</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> PK_ConceptId <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (ConceptId)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">-- Insert embedding</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> SNOMED.ConceptEmbeddings (ConceptId, Term, Embedding)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span> (?, ?, TO_VECTOR(?))</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">-- Semantic search using cosine similarity</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> TOP <span class="dv">10</span> ConceptId, Term,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>       VECTOR_COSINE(Embedding, TO_VECTOR(?)) <span class="kw">AS</span> Score</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> SNOMED.ConceptEmbeddings</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> Score <span class="op">&gt;</span> <span class="fl">0.7</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> Score <span class="kw">DESC</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">-- Hybrid search: semantic + active filter</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> TOP <span class="dv">10</span> ce.ConceptId, ce.Term,</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>       VECTOR_COSINE(ce.Embedding, TO_VECTOR(?)) <span class="kw">AS</span> Score</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> SNOMED.ConceptEmbeddings ce</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> SNOMED.Concept c <span class="kw">ON</span> c.ConceptId <span class="op">=</span> ce.ConceptId</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> c.Active <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> Score <span class="kw">DESC</span></span></code></pre></div>
+<h3 id="ann-index-for-831k-concept-embeddings">ANN Index (for 831K+
+concept embeddings)</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Create ANN index for large datasets</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> IX_Embedding <span class="kw">ON</span> SNOMED.ConceptEmbeddings(Embedding)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">TYPE</span> VECTOR <span class="kw">WITH</span> OPTIONS <span class="st">&#39;{&quot;type&quot;: &quot;HNSW&quot;, &quot;m&quot;: 16, &quot;efConstruction&quot;: 200}&#39;</span></span></code></pre></div>
+<h3 id="integration-with-ai-hub">Integration with AI Hub</h3>
+<p>The AI Hub’s <strong>langchain SDK</strong>
+(<code>langchain-intersystems</code> package) provides: -
+<code>VectorStore</code> implementation backed by IRIS - Integration
+with Config Store for credential management - LLM and MCP configurations
+stored centrally</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># From langchain SDK demo</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> iris</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_intersystems.chat_models <span class="im">import</span> init_chat_model</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_intersystems <span class="im">import</span> init_mcp_client</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>conn <span class="op">=</span> iris.<span class="ex">connect</span>(<span class="st">&#39;localhost&#39;</span>, <span class="dv">51774</span>, <span class="st">&#39;USER&#39;</span>, <span class="st">&#39;_SYSTEM&#39;</span>, <span class="st">&#39;SYS&#39;</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> init_chat_model(<span class="st">&#39;openai&#39;</span>, conn)  <span class="co"># pulls config from Config Store</span></span></code></pre></div>
+<h3 id="embedding-generation-strategy">Embedding Generation
+Strategy</h3>
+<p>For your SNOMED port, two options:</p>
+<table>
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 27%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ollama (local)</strong></td>
+<td>Free, private, matches current sct approach</td>
+<td>Slower, requires Ollama running</td>
+</tr>
+<tr>
+<td><strong>OpenAI/cloud</strong></td>
+<td>Faster batch embedding</td>
+<td>Cost, data leaves premises</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommended:</strong> Use Ollama via the AI Hub’s
+OpenAI-compatible provider config:</p>
+<pre class="objectscript"><code>Set provider = ##class(%AI.Provider).Create(&quot;openai&quot;, {
+    &quot;base_url&quot;: &quot;http://localhost:11434/v1/&quot;,
+    &quot;api_key&quot;: &quot;ollama&quot;
+})</code></pre>
+<p>Embed concepts in batches using Python, store in IRIS VECTOR columns,
+expose semantic search as an MCP tool.</p>
+<hr />
+<h2 id="packaging-distribution-model">5. Packaging &amp; Distribution
+Model</h2>
+<h3 id="ipm-intersystems-package-manager">IPM (InterSystems Package
+Manager)</h3>
+<p><strong>Confidence: HIGH</strong> (verified from IPM repo docs)</p>
+<p>IPM is the standard distribution mechanism for IRIS applications:</p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Config file</td>
+<td><code>module.xml</code> in package root</td>
+</tr>
+<tr>
+<td>Registry</td>
+<td>pm.community.intersystems.com (public) or private ORAS</td>
+</tr>
+<tr>
+<td>Scope</td>
+<td>Per-namespace installation</td>
+</tr>
+<tr>
+<td>Python deps</td>
+<td>Supported via <code>requirements.txt</code> + installer hook</td>
+</tr>
+<tr>
+<td>IRIS version</td>
+<td>IPM 0.10.x requires IRIS &gt;2022.1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="package-structure-for-snomed-tool">Package Structure for SNOMED
+Tool</h3>
+<pre><code>snomed-iris/
+  module.xml
+  src/
+    SNOMED/
+      Concept.cls           -- %Persistent class for concepts
+      Description.cls       -- %Persistent for descriptions
+      Relationship.cls      -- %Persistent for relationships
+      Loader.cls            -- RF2 loading (Python methods)
+      TransitiveClosure.cls -- TC computation
+      Tools/
+        Lookup.cls          -- %AI.Tool for concept lookup
+        Search.cls          -- %AI.Tool for lexical search
+        Hierarchy.cls       -- %AI.Tool for hierarchy queries
+        Semantic.cls        -- %AI.Tool for vector search
+      ToolSet.cls           -- %AI.ToolSet composing all tools
+      MCP/
+        Service.cls         -- %AI.MCP.Service
+  config/
+    mcp-config.toml         -- iris-mcp-server configuration template
+  data/
+    requirements.txt        -- Python dependencies
+  README.md</code></pre>
+<h3 id="module.xml-example">module.xml Example</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">&lt;?xml</span><span class="ot"> version=</span><span class="st">&quot;1.0&quot;</span><span class="ot"> encoding=</span><span class="st">&quot;UTF-8&quot;</span><span class="fu">?&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">Export</span><span class="ot"> generator=</span><span class="st">&quot;IRIS&quot;</span><span class="ot"> version=</span><span class="st">&quot;26&quot;</span>&gt;</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Module</span>&gt;</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">Name</span>&gt;snomed-iris&lt;/<span class="kw">Name</span>&gt;</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">Version</span>&gt;1.0.0&lt;/<span class="kw">Version</span>&gt;</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">Description</span>&gt;SNOMED CT Terminology Services for IRIS AI Hub&lt;/<span class="kw">Description</span>&gt;</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">Keywords</span>&gt;snomed,terminology,fhir,mcp,ai-hub&lt;/<span class="kw">Keywords</span>&gt;</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">SourcesRoot</span>&gt;src&lt;/<span class="kw">SourcesRoot</span>&gt;</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">Resource</span><span class="ot"> Name=</span><span class="st">&quot;SNOMED.PKG&quot;</span>/&gt;</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">Dependencies</span>&gt;</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">Module</span><span class="ot"> Name=</span><span class="st">&quot;iris-fhir-server&quot;</span><span class="ot"> Version=</span><span class="st">&quot;&gt;=2.0.0&quot;</span>/&gt;</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">Dependencies</span>&gt;</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">Invoke</span><span class="ot"> Class=</span><span class="st">&quot;SNOMED.Installer&quot;</span><span class="ot"> Method=</span><span class="st">&quot;Setup&quot;</span><span class="ot"> Phase=</span><span class="st">&quot;Configure&quot;</span>/&gt;</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">Module</span>&gt;</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">Export</span>&gt;</span></code></pre></div>
+<h3 id="container-distribution">Container Distribution</h3>
+<p>For Docker-based deployment (matching your current setup):</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> containers.intersystems.com/intersystems/irishealth-community:2026.2.0AI</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Install IPM package</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">iris</span> start IRIS <span class="kw">&amp;&amp;</span> <span class="dt">\</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="ex">iris</span> session IRIS <span class="at">-U</span> USER <span class="st">&quot;zpm </span><span class="dt">\&quot;</span><span class="st">install snomed-iris</span><span class="dt">\&quot;</span><span class="st">&quot;</span> <span class="kw">&amp;&amp;</span> <span class="dt">\</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="ex">iris</span> stop IRIS quietly</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy MCP server config</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> config/mcp-config.toml /opt/iris/config/</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="kw">EXPOSE</span> 1972 52773</span></code></pre></div>
+<hr />
+<h2 id="recommended-architecture">6. Recommended Architecture</h2>
+<h3 id="high-level-design">High-Level Design</h3>
+<pre><code>                        ┌──────────────────────────┐
+                        │   Claude Desktop/Code    │
+                        └────────────┬─────────────┘
+                                     │ MCP (stdio)
+                                     ▼
+                        ┌──────────────────────────┐
+                        │   iris-mcp-server (Rust) │
+                        └────────────┬─────────────┘
+                                     │ wgproto
+                                     ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    IRIS for Health 2026.2.0AI                     │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────────┐ │
+│  │  SNOMED.MCP.Service (%AI.MCP.Service)                       │ │
+│  │    -&gt; SNOMED.ToolSet (%AI.ToolSet)                          │ │
+│  │       - Lookup: GetConcept, GetDescriptions                 │ │
+│  │       - Search: LexicalSearch, SemanticSearch                │ │
+│  │       - Hierarchy: GetAncestors, GetDescendants, IsA        │ │
+│  │       - Query: SearchByPattern (Query-as-Tool)              │ │
+│  └─────────────────────────────────────────────────────────────┘ │
+│                                                                   │
+│  ┌─────────────────┐  ┌──────────────────┐  ┌────────────────┐  │
+│  │ SQL Tables       │  │ Globals           │  │ VECTOR columns │  │
+│  │ SNOMED.Concept   │  │ ^SNOMED.TC        │  │ Embeddings     │  │
+│  │ SNOMED.Desc      │  │ ^SNOMED.Children  │  │ (384-dim)      │  │
+│  │ SNOMED.Rel       │  │ ^SNOMED.WordIdx   │  │ ANN indexed    │  │
+│  └─────────────────┘  └──────────────────┘  └────────────────┘  │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────────┐ │
+│  │  Python: RF2 Loader, Embedding Generator, TC Computation    │ │
+│  └─────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     ▼ (optional)
+                        ┌──────────────────────────┐
+                        │   Ollama (embeddings)    │
+                        └──────────────────────────┘</code></pre>
+<h3 id="feature-mapping-sct-rust---iris-ai-hub">Feature Mapping: sct
+(Rust) -&gt; IRIS AI Hub</h3>
+<table>
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 42%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>Current sct Feature</th>
+<th>IRIS Implementation</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RF2 -&gt; NDJSON</td>
+<td>Python <code>[ Language = python ]</code> loader -&gt; SQL</td>
+<td>Bypass NDJSON; load directly into IRIS</td>
+</tr>
+<tr>
+<td>SQLite + FTS5</td>
+<td>IRIS SQL + iFind/BM25 text index</td>
+<td>Native full-text search built into IRIS</td>
+</tr>
+<tr>
+<td>Parquet export</td>
+<td>Python <code>pyarrow</code> or SQL export</td>
+<td>Can export from IRIS tables</td>
+</tr>
+<tr>
+<td>MCP server (stdio)</td>
+<td><code>iris-mcp-server</code> + <code>%AI.MCP.Service</code></td>
+<td>More capable: HTTP, auth, monitoring</td>
+</tr>
+<tr>
+<td>Vector embeddings</td>
+<td>IRIS <code>VECTOR</code> type + SQL similarity</td>
+<td>Native, SIMD-accelerated</td>
+</tr>
+<tr>
+<td>Semantic search</td>
+<td><code>VECTOR_COSINE()</code> in SQL</td>
+<td>ANN indexed for 831K concepts</td>
+</tr>
+<tr>
+<td>Transitive closure</td>
+<td>Globals: <code>^SNOMED.TC(ancestor,desc)</code></td>
+<td>O(1) lookup, computed at load time</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-risks-mitigations">7. Key Risks &amp; Mitigations</h2>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 30%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EAP APIs may change before GA</td>
+<td>Medium</td>
+<td>Isolate AI Hub dependencies; use adapter pattern</td>
+</tr>
+<tr>
+<td>No SNOMED-specific FHIR support built-in</td>
+<td>Low</td>
+<td>You’re building this - it’s the value proposition</td>
+</tr>
+<tr>
+<td>Python GIL for concurrent embedding</td>
+<td>Low</td>
+<td>IRIS Job model sidesteps GIL (separate processes)</td>
+</tr>
+<tr>
+<td>ANN index behavior for 831K vectors</td>
+<td>Low</td>
+<td>Well within documented performance range (&gt;100K)</td>
+</tr>
+<tr>
+<td><code>iris-mcp-server</code> is new/pre-release</td>
+<td>Medium</td>
+<td>Rust binary is standalone; can fall back to direct API</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="recommended-next-steps">8. Recommended Next Steps</h2>
+<ol type="1">
+<li><strong>Prototype the data model</strong>: Create
+<code>SNOMED.Concept</code>, <code>SNOMED.Description</code>,
+<code>SNOMED.Relationship</code> persistent classes in your Docker
+container</li>
+<li><strong>Build RF2 loader</strong>: Python method using
+<code>iris.sql.prepare()</code> for bulk insert</li>
+<li><strong>Implement transitive closure</strong>: Compute and store in
+<code>^SNOMED.TC</code> global</li>
+<li><strong>Create first MCP tool</strong>: Simple concept lookup via
+<code>%AI.Tool</code></li>
+<li><strong>Test with Claude Desktop</strong>: Configure
+<code>iris-mcp-server</code> + <code>config.toml</code></li>
+<li><strong>Add vector search</strong>: Generate embeddings for
+description terms, store in VECTOR column</li>
+<li><strong>Package as IPM module</strong>: Create
+<code>module.xml</code> for distribution</li>
+</ol>
+<hr />
+<h2 id="sources">Sources</h2>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 23%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr>
+<th>Source</th>
+<th>Type</th>
+<th>Confidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a
+href="https://github.com/intersystems-community/ai-hub-eap/blob/main/MCP_Server_Guide.md">AI
+Hub EAP - MCP Server Guide</a></td>
+<td>Primary documentation</td>
+<td>Verified</td>
+</tr>
+<tr>
+<td><a
+href="https://github.com/intersystems-community/ai-hub-eap/blob/main/ObjectScript_SDK_Guide.md">AI
+Hub EAP - ObjectScript SDK Guide</a></td>
+<td>Primary documentation</td>
+<td>Verified</td>
+</tr>
+<tr>
+<td><a
+href="https://github.com/intersystems-community/ai-hub-eap/blob/main/langchain_SDK.md">AI
+Hub EAP - LangChain SDK</a></td>
+<td>Primary documentation</td>
+<td>Verified</td>
+</tr>
+<tr>
+<td><a
+href="https://github.com/intersystems-community/ai-hub-eap/blob/main/Config_Store_Guide.md">AI
+Hub EAP - Config Store Guide</a></td>
+<td>Primary documentation</td>
+<td>Verified</td>
+</tr>
+<tr>
+<td><a
+href="https://github.com/intersystems-community/iris-vector-search">IRIS
+Vector Search repo</a></td>
+<td>Community example</td>
+<td>Verified</td>
+</tr>
+<tr>
+<td><a href="https://github.com/intersystems/ipm">IPM repo</a></td>
+<td>Official tool</td>
+<td>Verified</td>
+</tr>
+<tr>
+<td>InterSystems IRIS Embedded Python docs</td>
+<td>Official docs</td>
+<td>Structure verified; content from training data</td>
+</tr>
+<tr>
+<td>IRIS for Health terminology services</td>
+<td>Official docs</td>
+<td>Navigation-only access; content from training data</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Research completed: 2026-05-13</em></p>
+</body>
+</html>

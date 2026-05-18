@@ -1,0 +1,33 @@
+# SNOMED CT data — licensed content, never commit
+*.ndjson
+*.parquet
+*.lance
+*.db
+*.db-shm
+*.db-wal
+*.arrow
+snomed-concepts/
+snomed-hierarchies/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Agents
+.claude
+
+# Node modules
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Archive (temporary — remove after verification)
+_archive/
+
+# Downloads
+.downloads/

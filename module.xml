@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="IRIS" version="26">
+  <Module>
+    <Name>snomed-iris</Name>
+    <Version>0.4.0</Version>
+    <Description>SNOMED CT Terminology Services with MCP Tools for IRIS AI Hub</Description>
+    <Keywords>snomed,terminology,mcp,ai-hub,vector-search</Keywords>
+    <SourcesRoot>src</SourcesRoot>
+    <Resource Name="SNOMED.PKG"/>
+    <Invoke Class="SNOMED.Installer" Method="Setup" Phase="Configure"/>
+  </Module>
+</Export>

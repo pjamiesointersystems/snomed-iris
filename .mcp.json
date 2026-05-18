@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "snomed": {
+      "command": "docker",
+      "args": ["exec", "-i", "snomed-iris", "/usr/irissys/bin/iris-mcp-server", "--config", "/opt/iris/config/mcp-config.toml", "run"]
+    }
+  }
+}

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>2-2-transitive-closure-computation</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">2-2-transitive-closure-computation</h1>
+</header>
+<h1 id="story-2.2-transitive-closure-computation">Story 2.2: Transitive
+Closure Computation</h1>
+<p>Status: review</p>
+<h2 id="story">Story</h2>
+<p>As a terminology administrator, I want to compute and store the
+transitive closure of SNOMED’s IS-A hierarchy, so that
+ancestor/descendant queries and subsumption checks are
+instantaneous.</p>
+<h2 id="acceptance-criteria">Acceptance Criteria</h2>
+<ol type="1">
+<li><code>SNOMED.TransitiveClosure.Compute()</code> populates
+<code>^SNOMED.TC(ancestorId, descendantId)</code> for all transitive
+IS-A paths</li>
+<li><code>^SNOMED.Children(parentId, childId)</code> is populated with
+direct parent-child relationships</li>
+<li>Computation handles the full SNOMED hierarchy (~831K concepts)
+without running out of memory</li>
+<li>Progress is reported during computation</li>
+<li><code>$DATA(^SNOMED.TC("73211009", "46635009"))</code> returns true
+(Diabetes mellitus -&gt; Type 1 diabetes)</li>
+<li>A <code>Clear()</code> method kills the globals for
+re-computation</li>
+</ol>
+<h2 id="tasks-subtasks">Tasks / Subtasks</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Task 1: Create
+<code>SNOMED.TransitiveClosure</code> class with <code>Compute</code>
+method (AC: #1, #2, #3, #4)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Create
+<code>src/SNOMED/TransitiveClosure.cls</code> extending
+<code>%RegisteredObject</code></label></li>
+<li><label><input type="checkbox" checked="" />Implement
+<code>Compute()</code> as <code>[ Language = python ]</code>
+classmethod</label></li>
+<li><label><input type="checkbox" checked="" />Load active IS-A edges
+from SNOMED.Relationship (typeId=116680003, Active=1) into Python
+dict</label></li>
+<li><label><input type="checkbox" checked="" />Populate
+<code>^SNOMED.Children(parentId, childId)</code> from direct
+edges</label></li>
+<li><label><input type="checkbox" checked="" />BFS upward from each
+concept to find all ancestors; store in
+<code>^SNOMED.TC(ancestorId, descendantId)</code></label></li>
+<li><label><input type="checkbox" checked="" />Report progress every
+10,000 concepts processed</label></li>
+<li><label><input type="checkbox" checked="" />Return <code>$$$OK</code>
+status</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 2: Add
+<code>Clear</code> method (AC: #6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Implement
+<code>Clear()</code> that kills both <code>^SNOMED.TC</code> and
+<code>^SNOMED.Children</code> globals</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 3: Test in Docker
+container (AC: #1, #2, #5)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Load relationship test
+fixture (has IS-A edges: 46635009→73211009,
+73211009→138875005)</label></li>
+<li><label><input type="checkbox" checked="" />Run
+Compute()</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>^SNOMED.Children("73211009","46635009")</code> exists (direct
+child)</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>^SNOMED.TC("73211009","46635009")</code> exists (Type 1 DM is
+descendant of DM)</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>^SNOMED.TC("138875005","46635009")</code> exists (transitive:
+root→Type 1 DM)</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>^SNOMED.TC("46635009","73211009")</code> does NOT exist (wrong
+direction)</label></li>
+</ul></li>
+</ul>
+<h2 id="dev-notes">Dev Notes</h2>
+<h3 id="architecture-pattern">Architecture Pattern</h3>
+<p>This is <strong>Python</strong> (<code>[ Language = python ]</code>)
+because: - The research report explicitly recommends “Python for graph
+algorithms” - BFS requires in-memory data structures (dict of lists) —
+Python is natural for this - The ~831K IS-A edges fit in memory (~50MB
+as a Python dict) - Globals are written via <code>iris.gref()</code> for
+maximum speed</p>
+<h3 id="algorithm-from-existing-rust-implementation">Algorithm (from
+existing Rust implementation)</h3>
+<p>The algorithm is <strong>BFS upward from each concept</strong>:</p>
+<ol type="1">
+<li>Load all active IS-A edges into
+<code>parents_of: dict[str, list[str]]</code> (child → [parent1,
+parent2, …])</li>
+<li>For each concept with parents, BFS upward through ancestors</li>
+<li>For each (ancestor, descendant) pair discovered, set
+<code>^SNOMED.TC(ancestor, descendant) = ""</code></li>
+<li>Direct edges also stored in
+<code>^SNOMED.Children(parent, child) = ""</code></li>
+</ol>
+<h3 id="global-structure">Global Structure</h3>
+<pre><code>^SNOMED.TC(ancestorId, descendantId) = &quot;&quot;
+  - Meaning: descendantId IS-A ancestorId (transitively)
+  - Lookup: $DATA(^SNOMED.TC(ancestor, descendant)) → O(1) subsumption check
+  - Traversal: $ORDER(^SNOMED.TC(conceptId, &quot;&quot;)) iterates all descendants
+
+^SNOMED.Children(parentId, childId) = &quot;&quot;
+  - Meaning: childId is a direct child of parentId
+  - Traversal: $ORDER(^SNOMED.Children(parentId, &quot;&quot;)) iterates direct children</code></pre>
+<h3 id="implementation-code-pattern">Implementation Code Pattern</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ClassMethod Compute() As <span class="op">%</span>Status [ Language <span class="op">=</span> python ]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> iris</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> collections <span class="im">import</span> deque</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load active IS-A edges</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    sql <span class="op">=</span> iris.sql.<span class="bu">exec</span>(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;SELECT SourceId, DestinationId FROM SNOMED.Relationship &quot;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;WHERE TypeId = &#39;116680003&#39; AND Active = 1&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    parents_of <span class="op">=</span> {}  <span class="co"># child -&gt; [parent1, parent2, ...]</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    tc_global <span class="op">=</span> iris.gref(<span class="st">&quot;^SNOMED.TC&quot;</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    children_global <span class="op">=</span> iris.gref(<span class="st">&quot;^SNOMED.Children&quot;</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> sql.<span class="bu">next</span>():</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        child <span class="op">=</span> sql.getfield(<span class="dv">1</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        parent <span class="op">=</span> sql.getfield(<span class="dv">2</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        parents_of.setdefault(child, []).append(parent)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Direct parent-child</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        children_global[parent, child] <span class="op">=</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    concepts <span class="op">=</span> <span class="bu">list</span>(parents_of.keys())</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> <span class="bu">len</span>(concepts)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Computing transitive closure for </span><span class="sc">{</span>total<span class="sc">}</span><span class="ss"> concepts...&quot;</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, concept_id <span class="kw">in</span> <span class="bu">enumerate</span>(concepts):</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># BFS upward</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        visited <span class="op">=</span> {concept_id}</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        queue <span class="op">=</span> deque([concept_id])</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> queue:</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            node <span class="op">=</span> queue.popleft()</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> parent <span class="kw">in</span> parents_of.get(node, []):</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> parent <span class="kw">not</span> <span class="kw">in</span> visited:</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>                    visited.add(parent)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>                    tc_global[parent, concept_id] <span class="op">=</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                    queue.append(parent)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (i <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> <span class="dv">10000</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&quot;  Processed </span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>total<span class="sc">}</span><span class="ss"> concepts...&quot;</span>)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Transitive closure complete: </span><span class="sc">{</span>total<span class="sc">}</span><span class="ss"> concepts processed&quot;</span>)</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> iris.cls(<span class="st">&quot;%SYSTEM.Status&quot;</span>).OK()</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="critical-implementation-rules">Critical Implementation
+Rules</h3>
+<ul>
+<li><strong>Global subscript order is
+<code>(ancestorId, descendantId)</code></strong> — this enables
+<code>$ORDER(^SNOMED.TC(ancestorId, ""))</code> to iterate all
+descendants of an ancestor</li>
+<li><strong>IS-A relationship direction:</strong> In RF2, SourceId IS-A
+DestinationId (source is the child, destination is the parent)</li>
+<li><strong>Only active IS-A:</strong> Filter
+<code>TypeId = '116680003' AND Active = 1</code></li>
+<li><strong><code>iris.gref()</code></strong> for global access — this
+is the correct Python API for setting global nodes</li>
+<li><strong>Empty string value</strong> (<code>""</code>) — we only need
+existence, not a stored value</li>
+<li><strong>BFS not DFS</strong> — BFS gives shortest path first
+(matching the Rust implementation)</li>
+<li><strong>Memory:</strong> The parents_of dict for 831K concepts with
+~1M edges is ~50-100MB — fits comfortably</li>
+<li><strong>No self-referential entries</strong> — don’t store
+<code>^SNOMED.TC(X, X)</code></li>
+</ul>
+<h3 id="what-not-to-do">What NOT To Do</h3>
+<ul>
+<li>Do NOT use <code>iris.sql.prepare()</code> for global writes — use
+<code>iris.gref()</code> directly (faster, no SQL overhead)</li>
+<li>Do NOT store the TC in a SQL table — globals are the correct
+architecture (O(1) via <code>$DATA</code>)</li>
+<li>Do NOT use networkx or other graph libraries — simple BFS with a
+deque is sufficient and avoids dependencies</li>
+<li>Do NOT compute from scratch if globals exist — the
+<code>Clear()</code> method should be called first</li>
+<li>Do NOT reverse the subscript order — it must be
+<code>(ancestor, descendant)</code> for efficient descendant
+iteration</li>
+<li>Do NOT include inactive IS-A relationships — only
+<code>Active = 1</code></li>
+</ul>
+<h3 id="iris.sql.exec-result-set-api">iris.sql.exec() Result Set
+API</h3>
+<p>From testing in previous stories, the <code>iris.sql.exec()</code>
+returns a result set. The API for iterating:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>rs <span class="op">=</span> iris.sql.<span class="bu">exec</span>(<span class="st">&quot;SELECT col1, col2 FROM table&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> rs.<span class="bu">next</span>():</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    val1 <span class="op">=</span> rs.getfield(<span class="dv">1</span>)  <span class="co"># 1-based column index</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    val2 <span class="op">=</span> rs.getfield(<span class="dv">2</span>)</span></code></pre></div>
+<p>Note: If this API doesn’t work, fallback is
+<code>iris.sql.prepare()</code> + <code>.execute()</code> then iterate
+with <code>.next()</code> and <code>.getfield()</code>.</p>
+<h3 id="test-fixture-data-from-story-1.3">Test Fixture Data (from Story
+1.3)</h3>
+<p>The relationship test fixture has these IS-A edges: -
+<code>100000001</code>: 46635009 → 73211009 (Type 1 DM IS-A Diabetes
+mellitus) — Active - <code>100000002</code>: 73211009 → 138875005
+(Diabetes mellitus IS-A SNOMED CT Concept) — Active -
+<code>100000003</code>: 404684003 → 138875005 (Clinical finding IS-A
+root) — INACTIVE (should be excluded)</p>
+<p>Expected TC after computation: -
+<code>^SNOMED.TC("73211009", "46635009")</code> = “” (DM is ancestor of
+Type 1 DM) - <code>^SNOMED.TC("138875005", "73211009")</code> = “” (root
+is ancestor of DM) - <code>^SNOMED.TC("138875005", "46635009")</code> =
+“” (root is ancestor of Type 1 DM — transitive!) -
+<code>^SNOMED.TC("138875005", "404684003")</code> should NOT exist
+(inactive relationship)</p>
+<h3 id="project-structure-notes">Project Structure Notes</h3>
+<ul>
+<li>New file: <code>src/SNOMED/TransitiveClosure.cls</code></li>
+<li>Package: <code>SNOMED</code></li>
+<li>Globals created: <code>^SNOMED.TC</code>,
+<code>^SNOMED.Children</code></li>
+</ul>
+<h3 id="previous-story-intelligence">Previous Story Intelligence</h3>
+<ul>
+<li><code>iris.gref()</code> API:
+<code>gref = iris.gref("^GlobalName")</code> then
+<code>gref[subscript1, subscript2] = value</code></li>
+<li>Docker container: <code>iris-ai-hub</code></li>
+<li>Testing: pipe commands to
+<code>iris session IRIS -U USER</code></li>
+<li>ObjectScript global check:
+<code>Write $DATA(^SNOMED.TC("73211009","46635009"))</code></li>
+</ul>
+<h3 id="references">References</h3>
+<ul>
+<li>[Source: _bmad-output/planning-artifacts/epics.md#Story 2.2]</li>
+<li>[Source:
+_bmad-output/planning-artifacts/research/technical-iris-for-health-ai-hub-snomed-ct-port-research-2026-05-13.md
+— lines 65, 253-268, 508]</li>
+<li>[Source: src/commands/tct.rs — BFS algorithm reference from Rust
+implementation]</li>
+<li>[Source: tests/fixtures/rf2/sct2_Relationship_Snapshot_Test.txt —
+test data with IS-A edges]</li>
+</ul>
+<h2 id="dev-agent-record">Dev Agent Record</h2>
+<h3 id="agent-model-used">Agent Model Used</h3>
+<p>Claude Opus 4.6</p>
+<h3 id="debug-log-references">Debug Log References</h3>
+<ul>
+<li><code>iris.sql.exec()</code> returns
+<code>iris.%SYS.Python.SQLResultSet</code> which does NOT have
+<code>.next()</code> or <code>.getfield()</code> methods</li>
+<li>The result set IS iterable: <code>for row in rs:</code> yields lists
+(e.g., <code>['46635009', '73211009']</code>)</li>
+<li>Switched from <code>iris.sql.exec()</code> to
+<code>iris.sql.prepare().execute()</code> — same iterable behavior</li>
+<li><code>gref.kill()</code> with no args raises
+<code>KeyError: 'Invalid args'</code> — must use
+<code>gref.kill([])</code> to kill entire global</li>
+<li><code>iris.execute("Kill ^GlobalName")</code> also works as
+alternative</li>
+</ul>
+<h3 id="completion-notes-list">Completion Notes List</h3>
+<ul>
+<li>Created <code>SNOMED.TransitiveClosure</code> class with Python
+<code>Compute()</code> and <code>Clear()</code> methods</li>
+<li><code>Compute()</code> uses <code>iris.sql.prepare()</code> to load
+active IS-A edges, iterates result set with
+<code>for row in rs:</code></li>
+<li>BFS upward from each concept using <code>collections.deque</code>;
+stores ancestors in <code>^SNOMED.TC(ancestor, descendant)</code></li>
+<li>Direct parent-child edges stored in
+<code>^SNOMED.Children(parent, child)</code></li>
+<li>Progress reporting every 10,000 concepts (not triggered in test with
+only 2 concepts)</li>
+<li><code>Clear()</code> uses <code>gref.kill([])</code> to kill both
+globals</li>
+<li>Verified all acceptance criteria:
+<ul>
+<li><code>^SNOMED.Children("73211009","46635009")</code> exists (direct
+child)</li>
+<li><code>^SNOMED.TC("73211009","46635009")</code> exists (DM ancestor
+of Type 1 DM)</li>
+<li><code>^SNOMED.TC("138875005","46635009")</code> exists (transitive:
+root ancestor of Type 1 DM)</li>
+<li><code>^SNOMED.TC("46635009","73211009")</code> does NOT exist (wrong
+direction)</li>
+<li><code>^SNOMED.TC("138875005","404684003")</code> does NOT exist
+(inactive IS-A excluded)</li>
+</ul></li>
+</ul>
+<h3 id="file-list">File List</h3>
+<ul>
+<li>src/SNOMED/TransitiveClosure.cls (NEW)</li>
+</ul>
+</body>
+</html>

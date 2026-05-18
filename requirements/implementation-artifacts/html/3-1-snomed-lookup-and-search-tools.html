@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>3-1-snomed-lookup-and-search-tools</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">3-1-snomed-lookup-and-search-tools</h1>
+</header>
+<h1 id="story-3.1-snomed-lookup-and-search-tools">Story 3.1: SNOMED
+Lookup and Search Tools</h1>
+<p>Status: review</p>
+<h2 id="story">Story</h2>
+<p>As a Claude Desktop/Code user, I want MCP tools that let me look up
+SNOMED concepts by ID and search by term, so that I can query
+terminology through natural language conversation.</p>
+<h2 id="acceptance-criteria">Acceptance Criteria</h2>
+<ol type="1">
+<li><code>SNOMED.Tools.Lookup</code> extends <code>%AI.Tool</code> with
+a <code>GetConcept(sctid)</code> method that returns JSON with concept
+details (ConceptId, FSN, Active, descriptions list)</li>
+<li><code>SNOMED.Tools.Search</code> extends <code>%AI.Tool</code> with
+a <code>LexicalSearch(term, maxResults)</code> method that returns
+matching active concepts</li>
+<li>Results are limited to <code>maxResults</code> (default 20) and only
+include active concepts</li>
+<li>A Query-as-Tool <code>SearchByPattern</code> is defined as a class
+query returning matches in the standard
+<code>{rows, row_count, truncated}</code> envelope</li>
+<li>Tools compile successfully and methods return correct JSON when
+called directly</li>
+</ol>
+<h2 id="tasks-subtasks">Tasks / Subtasks</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Task 1: Create
+<code>SNOMED.Tools.Lookup</code> class (AC: #1, #5)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Create
+<code>src/SNOMED/Tools/Lookup.cls</code> extending
+<code>%AI.Tool</code></label></li>
+<li><label><input type="checkbox" checked="" />Implement
+<code>GetConcept(sctid)</code> classmethod returning JSON with
+ConceptId, FSN, Active, and descriptions array</label></li>
+<li><label><input type="checkbox" checked="" />Query SNOMED.Concept for
+active status + SNOMED.Description for all active
+descriptions</label></li>
+<li><label><input type="checkbox" checked="" />Return FSN (TypeId =
+900000000000003001) as primary display term</label></li>
+<li><label><input type="checkbox" checked="" />Handle concept-not-found
+case with meaningful JSON error</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 2: Create
+<code>SNOMED.Tools.Search</code> class (AC: #2, #3, #4, #5)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Create
+<code>src/SNOMED/Tools/Search.cls</code> extending
+<code>%AI.Tool</code></label></li>
+<li><label><input type="checkbox" checked="" />Implement
+<code>LexicalSearch(term, maxResults)</code> delegating to
+<code>##class(SNOMED.Search).Lexical()</code></label></li>
+<li><label><input type="checkbox" checked="" />Default maxResults =
+20</label></li>
+<li><label><input type="checkbox" checked="" />Add
+<code>SearchByPattern</code> class query using SQL LIKE pattern
+matching</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 3: Test in Docker
+container (AC: #1-#5)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Load test fixtures
+(concepts + descriptions)</label></li>
+<li><label><input type="checkbox" checked="" />Compile both tool
+classes</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>GetConcept("73211009")</code> returns correct JSON with FSN and
+descriptions</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>GetConcept("999999999")</code> returns not-found error
+JSON</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>LexicalSearch("diabetes", 20)</code> returns matching
+results</label></li>
+<li><label><input type="checkbox" checked="" />Verify
+<code>SearchByPattern</code> query returns results with LIKE
+pattern</label></li>
+</ul></li>
+</ul>
+<h2 id="dev-notes">Dev Notes</h2>
+<h3 id="architecture-pattern">Architecture Pattern</h3>
+<p>This story introduces the <strong><code>%AI.Tool</code></strong>
+pattern. Each tool class: - Extends <code>%AI.Tool</code> - Contains
+classmethods that become callable MCP tools - Each method has a doc
+comment (<code>///</code>) that becomes the tool description for the LLM
+- Returns <code>%String</code> containing JSON — the standard pattern
+from Stories 2.1-2.3</p>
+<p>The tool classes delegate to existing business logic: -
+<code>SNOMED.Tools.Lookup</code> → queries <code>SNOMED.Concept</code> +
+<code>SNOMED.Description</code> via SQL -
+<code>SNOMED.Tools.Search</code> → delegates to
+<code>##class(SNOMED.Search).Lexical()</code></p>
+<h3 id="ai.tool-class-pattern">%AI.Tool Class Pattern</h3>
+<pre class="objectscript"><code>Class SNOMED.Tools.Lookup Extends %AI.Tool
+{
+
+/// Look up a SNOMED CT concept by its identifier (SCTID).
+/// Returns concept details including the Fully Specified Name, active status, and all descriptions.
+ClassMethod GetConcept(sctid As %String) As %String
+{
+    // Implementation
+}
+
+}</code></pre>
+<p>Key points: - The <code>///</code> doc comment on each method becomes
+the tool description the LLM sees - Method parameters become tool input
+parameters - Return value is the tool result shown to the LLM -
+ObjectScript methods (not Python) — required by <code>%AI.Tool</code>
+framework</p>
+<h3 id="query-as-tool-pattern">Query-as-Tool Pattern</h3>
+<p>Class queries defined on a <code>%AI.Tool</code> class automatically
+become queryable tools. The framework wraps them in the standard
+<code>{rows, row_count, truncated}</code> envelope:</p>
+<pre class="objectscript"><code>Query SearchByPattern(pattern As %String, maxResults As %Integer = 50) As %SQLQuery [ SqlProc ]
+{
+    SELECT TOP :maxResults d.ConceptId, d.Term, d.TypeId
+    FROM SNOMED.Description d
+    JOIN SNOMED.Concept c ON c.ConceptId = d.ConceptId
+    WHERE d.Term LIKE :pattern
+    AND d.Active = 1 AND c.Active = 1
+    ORDER BY d.Term
+}</code></pre>
+<h3 id="implementation-getconcept">Implementation: GetConcept</h3>
+<pre class="objectscript"><code>ClassMethod GetConcept(sctid As %String) As %String
+{
+    // Check concept exists
+    Set sql = &quot;SELECT ConceptId, Active, DefinitionStatusId FROM SNOMED.Concept WHERE ConceptId = ?&quot;
+    Set stmt = ##class(%SQL.Statement).%New()
+    Set sc = stmt.%Prepare(sql)
+    If $$$ISERR(sc) Return {&quot;error&quot;: &quot;Prepare failed&quot;}.%ToJSON()
+    Set rs = stmt.%Execute(sctid)
+    If &#39;rs.%Next() {
+        Set err = {&quot;error&quot;: &quot;Concept not found&quot;, &quot;sctid&quot;: (sctid)}
+        Return err.%ToJSON()
+    }
+
+    Set result = {}
+    Set result.ConceptId = rs.ConceptId
+    Set result.Active = rs.Active
+    Set result.DefinitionStatusId = rs.DefinitionStatusId
+
+    // Get descriptions
+    Set descSql = &quot;SELECT Term, TypeId, Active FROM SNOMED.Description WHERE ConceptId = ? AND Active = 1 ORDER BY TypeId, Term&quot;
+    Set descStmt = ##class(%SQL.Statement).%New()
+    Set sc = descStmt.%Prepare(descSql)
+    Set descRs = descStmt.%Execute(sctid)
+    Set descriptions = []
+    Set fsn = &quot;&quot;
+    While descRs.%Next() {
+        Set desc = {}
+        Set desc.Term = descRs.Term
+        Set desc.TypeId = descRs.TypeId
+        Set desc.Active = descRs.Active
+        Do descriptions.%Push(desc)
+        // FSN TypeId = 900000000000003001
+        If descRs.TypeId = &quot;900000000000003001&quot; Set fsn = descRs.Term
+    }
+    Set result.FSN = fsn
+    Set result.Descriptions = descriptions
+    Return result.%ToJSON()
+}</code></pre>
+<h3 id="implementation-lexicalsearch">Implementation: LexicalSearch</h3>
+<pre class="objectscript"><code>ClassMethod LexicalSearch(term As %String, maxResults As %Integer = 20) As %String
+{
+    // Delegate to existing SNOMED.Search.Lexical
+    Return ##class(SNOMED.Search).Lexical(term, maxResults)
+}</code></pre>
+<p>This is a thin wrapper. The underlying
+<code>SNOMED.Search.Lexical()</code> already: - Uses iFind index for
+efficient full-text search - Joins to SNOMED.Concept for Active = 1
+filtering - Returns JSON array of <code>{ConceptId, Term, TypeId}</code>
+- Supports maxResults parameter</p>
+<h3 id="file-structure">File Structure</h3>
+<p>Per the research architecture:</p>
+<pre><code>src/SNOMED/Tools/Lookup.cls    (NEW)
+src/SNOMED/Tools/Search.cls    (NEW)</code></pre>
+<p>Note the <code>Tools</code> subdirectory — this matches the planned
+architecture from the research doc.</p>
+<h3 id="critical-implementation-rules">Critical Implementation
+Rules</h3>
+<ul>
+<li><strong>Must extend <code>%AI.Tool</code></strong> — this is what
+makes methods discoverable as MCP tools</li>
+<li><strong>ObjectScript only</strong> — <code>%AI.Tool</code> methods
+must be ObjectScript, not Python</li>
+<li><strong>Return <code>%String</code> with JSON</strong> — tool
+results are serialized JSON</li>
+<li><strong>Doc comments (<code>///</code>) are tool
+descriptions</strong> — write them clearly for LLM consumption</li>
+<li><strong>FSN TypeId is <code>900000000000003001</code></strong> —
+Fully Specified Name type identifier in SNOMED</li>
+<li><strong>Synonym TypeId is <code>900000000000013009</code></strong> —
+for reference</li>
+<li><strong><code>SearchByPattern</code> uses SQL LIKE</strong> — NOT
+iFind (LIKE supports wildcards the LLM can construct)</li>
+<li><strong>Query SqlProc annotation</strong> — required for the query
+to be callable as a stored procedure</li>
+</ul>
+<h3 id="what-not-to-do">What NOT To Do</h3>
+<ul>
+<li>Do NOT re-implement search logic — delegate to
+<code>SNOMED.Search.Lexical()</code></li>
+<li>Do NOT use Python for tool methods — ObjectScript is required by
+<code>%AI.Tool</code></li>
+<li>Do NOT return raw SQL result sets — always serialize to JSON</li>
+<li>Do NOT forget the <code>///</code> doc comments — they ARE the tool
+descriptions</li>
+<li>Do NOT put tools in <code>src/SNOMED/Search.cls</code> or existing
+files — create new files in <code>src/SNOMED/Tools/</code></li>
+<li>Do NOT add ToolSet or MCP Service yet — that’s Story 3.3</li>
+</ul>
+<h3 id="test-fixture-data">Test Fixture Data</h3>
+<p>From previous stories: - Concept 73211009 (Diabetes mellitus) —
+Active=1 - Concept 46635009 (Type 1 diabetes) — Active=1 - Concept
+138875005 (SNOMED CT Concept) — Active=1 - Concept 404684003 (Clinical
+finding) — Active=0 (should be excluded from searches) - Description for
+73211009: “Diabetes mellitus (disorder)” — FSN (TypeId
+900000000000003001) - Description for 73211009: “Diabetes mellitus” —
+Synonym (TypeId 900000000000013009)</p>
+<h3 id="previous-story-intelligence">Previous Story Intelligence</h3>
+<p>From Story 2.3 (Hierarchy): - ObjectScript
+<code>$DATA</code>/<code>$ORDER</code> patterns work perfectly - JSON
+construction: <code>Set obj = {}</code>,
+<code>Set obj.Property = value</code>, <code>Do arr.%Push(obj)</code>,
+<code>Return arr.%ToJSON()</code> - SQL statement pattern:
+<code>##class(%SQL.Statement).%New()</code> → <code>%Prepare(sql)</code>
+→ <code>%Execute(params)</code> → <code>rs.%Next()</code> - Docker
+testing: compile via <code>$SYSTEM.OBJ.Load()</code>, test via piped
+commands</p>
+<p>From Story 2.1 (Search): - iFind query syntax:
+<code>d.%ID %FIND search_index(TermIdx, ?, 0, '*')</code> -
+<code>SNOMED.Search.Lexical(term, maxResults)</code> returns JSON array
+— can be delegated to directly</p>
+<h3 id="eap-api-risk">EAP API Risk</h3>
+<p>The <code>%AI.Tool</code> and <code>%AI.ToolSet</code> classes are
+EAP (Early Access Program) APIs in IRIS 2026.2.0AI. If compilation fails
+because these classes don’t exist or have different signatures, document
+the error and HALT — the user may need to verify the AI Hub container
+version.</p>
+<h3 id="references">References</h3>
+<ul>
+<li>[Source: _bmad-output/planning-artifacts/epics.md#Story 3.1]</li>
+<li>[Source:
+_bmad-output/planning-artifacts/research/technical-iris-for-health-ai-hub-snomed-ct-port-research-2026-05-13.md
+— lines 99-131: Tool Registration Pattern]</li>
+<li>[Source: src/SNOMED/Search.cls — existing lexical search to delegate
+to]</li>
+<li>[Source: src/SNOMED/Hierarchy.cls — pattern reference for
+ObjectScript JSON methods]</li>
+</ul>
+<h2 id="dev-agent-record">Dev Agent Record</h2>
+<h3 id="agent-model-used">Agent Model Used</h3>
+<p>Claude Opus 4.6</p>
+<h3 id="debug-log-references">Debug Log References</h3>
+<ul>
+<li>Confirmed <code>%AI.Tool</code> exists in IRIS 2026.2.0AI container
+(no EAP issues)</li>
+<li><code>%AI.Tool</code> extends <code>%RegisteredObject</code> with
+<code>%Invoke</code>, <code>%Discover</code>, <code>%Decode</code>,
+<code>%Encode</code> methods</li>
+<li>SearchByPattern query compiles as <code>%Library.SQLQuery</code> —
+callable as stored proc
+<code>SNOMED_Tools.Search_SearchByPattern</code></li>
+</ul>
+<h3 id="completion-notes-list">Completion Notes List</h3>
+<ul>
+<li>Created <code>SNOMED.Tools.Lookup</code> extending
+<code>%AI.Tool</code> with <code>GetConcept(sctid)</code> method
+<ul>
+<li>Queries Concept table for metadata + Description table for active
+descriptions</li>
+<li>Identifies FSN via TypeId <code>900000000000003001</code></li>
+<li>Returns clean error JSON for not-found concepts</li>
+</ul></li>
+<li>Created <code>SNOMED.Tools.Search</code> extending
+<code>%AI.Tool</code> with:
+<ul>
+<li><code>LexicalSearch(term, maxResults=20)</code> — thin wrapper
+delegating to <code>SNOMED.Search.Lexical()</code></li>
+<li><code>SearchByPattern</code> class query — SQL LIKE pattern matching
+as Query-as-Tool</li>
+</ul></li>
+<li>Both classes compile cleanly and extend <code>%AI.Tool</code> for
+MCP discovery</li>
+<li>All acceptance criteria verified:
+<ul>
+<li>GetConcept returns FSN, Active, Descriptions array</li>
+<li>Not-found returns
+<code>{"error":"Concept not found","sctid":"..."}</code></li>
+<li>LexicalSearch returns 2 diabetes results (excludes inactive
+concept)</li>
+<li>SearchByPattern query exists and underlying SQL returns correct
+results</li>
+</ul></li>
+</ul>
+<h3 id="file-list">File List</h3>
+<ul>
+<li>src/SNOMED/Tools/Lookup.cls (NEW)</li>
+<li>src/SNOMED/Tools/Search.cls (NEW)</li>
+</ul>
+</body>
+</html>

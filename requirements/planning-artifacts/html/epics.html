@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>epics</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">epics</h1>
+</header>
+<h1 id="snomed-iris---epic-breakdown">snomed-iris - Epic Breakdown</h1>
+<h2 id="overview">Overview</h2>
+<p>This document provides the complete epic and story breakdown for
+snomed-iris, decomposing the requirements from the technical research
+report and architecture decisions into implementable stories.</p>
+<h2 id="requirements-inventory">Requirements Inventory</h2>
+<h3 id="functional-requirements">Functional Requirements</h3>
+<p>FR1: Load SNOMED CT RF2 release files (Concepts, Descriptions,
+Relationships) into IRIS persistent storage FR2: Store and query SNOMED
+CT concepts, descriptions, and relationships via SQL FR3: Perform
+full-text lexical search across concept descriptions FR4: Compute and
+store transitive closure for the SNOMED hierarchy with O(1) subsumption
+checking FR5: Expose SNOMED operations (lookup, search, hierarchy) as
+MCP tools for Claude Desktop/Code FR6: Generate vector embeddings for
+concept descriptions and perform semantic similarity search FR7: Package
+the solution as an IPM module distributable via Docker container</p>
+<h3 id="nonfunctional-requirements">NonFunctional Requirements</h3>
+<p>NFR1: Must handle 831K+ concepts (UK SNOMED Monolith) — stream
+processing, no full dataset in memory NFR2: RF2 bulk load should
+complete in under 60 seconds on modern hardware NFR3: Concept lookup and
+subsumption checks must be O(1) via global-based transitive closure
+NFR4: Vector search must use ANN indexing for sub-second semantic
+queries across 831K embeddings NFR5: EAP API dependencies must be
+isolated via adapter pattern to mitigate pre-GA API changes</p>
+<h3 id="additional-requirements">Additional Requirements</h3>
+<ul>
+<li>Hybrid ObjectScript/Python: Python for ETL/compute, ObjectScript for
+runtime tools and MCP</li>
+<li>%Persistent classes for SQL-accessible data + globals (^SNOMED.TC)
+for hierarchy</li>
+<li>IRIS VECTOR(DOUBLE, 384) type with HNSW ANN index for
+embeddings</li>
+<li>%AI.Tool/%AI.ToolSet/%AI.MCP.Service pattern for tool exposure</li>
+<li>iris-mcp-server with config.toml for Claude Desktop/Code
+connectivity</li>
+<li>IPM module.xml with Python requirements.txt installer hook</li>
+<li>Docker container based on irishealth-community:2026.2.0AI</li>
+<li>Ollama integration via OpenAI-compatible provider for embedding
+generation</li>
+</ul>
+<h3 id="ux-design-requirements">UX Design Requirements</h3>
+<p>N/A - No UI; this is a CLI/MCP tool</p>
+<h3 id="fr-coverage-map">FR Coverage Map</h3>
+<p>FR1: Epic 1 - RF2 ingestion into IRIS persistent storage FR2: Epic 1
+- SQL-queryable concept/description/relationship tables FR3: Epic 2 -
+Full-text lexical search across descriptions FR4: Epic 2 - Transitive
+closure computation and O(1) hierarchy queries FR5: Epic 3 - MCP tool
+exposure for Claude Desktop/Code FR6: Epic 4 - Vector embeddings and
+semantic similarity search FR7: Epic 5 - IPM packaging and Docker
+distribution</p>
+<h2 id="epic-list">Epic List</h2>
+<h3 id="epic-1-snomed-ct-data-foundation">Epic 1: SNOMED CT Data
+Foundation</h3>
+<p>Users can load a SNOMED CT RF2 release into IRIS and query concepts,
+descriptions, and relationships via SQL. <strong>FRs covered:</strong>
+FR1, FR2 <strong>NFRs:</strong> NFR1, NFR2, NFR5</p>
+<h3 id="epic-2-terminology-search-navigation">Epic 2: Terminology Search
+&amp; Navigation</h3>
+<p>Users can find SNOMED concepts via full-text lexical search and
+navigate the hierarchy (ancestors, descendants, subsumption checking).
+<strong>FRs covered:</strong> FR3, FR4 <strong>NFRs:</strong> NFR3,
+NFR5</p>
+<h3 id="epic-3-mcp-tool-exposure">Epic 3: MCP Tool Exposure</h3>
+<p>Claude Desktop/Code users can look up concepts, search terminology,
+and navigate the SNOMED hierarchy via natural language through MCP
+tools. <strong>FRs covered:</strong> FR5 <strong>NFRs:</strong> NFR5</p>
+<h3 id="epic-4-semantic-search">Epic 4: Semantic Search</h3>
+<p>Users can find SNOMED concepts by meaning (not just text match) using
+vector embeddings and similarity search, exposed as an MCP tool.
+<strong>FRs covered:</strong> FR6 <strong>NFRs:</strong> NFR4, NFR5</p>
+<h3 id="epic-5-packaging-distribution">Epic 5: Packaging &amp;
+Distribution</h3>
+<p>Teams can install the SNOMED tool via IPM or deploy as a Docker
+container with a single command. <strong>FRs covered:</strong> FR7
+<strong>NFRs:</strong> NFR5</p>
+<hr />
+<h2 id="epic-1-snomed-ct-data-foundation-1">Epic 1: SNOMED CT Data
+Foundation</h2>
+<p>Users can load a SNOMED CT RF2 release into IRIS and query concepts,
+descriptions, and relationships via SQL.</p>
+<h3 id="story-1.1-snomed-ct-data-model">Story 1.1: SNOMED CT Data
+Model</h3>
+<p>As a developer, I want persistent classes for SNOMED CT concepts,
+descriptions, and relationships with appropriate indexes, So that RF2
+data can be stored and queried via SQL.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> the IRIS namespace is configured
+<strong>When</strong> the classes are compiled <strong>Then</strong> SQL
+tables <code>SNOMED.Concept</code>, <code>SNOMED.Description</code>, and
+<code>SNOMED.Relationship</code> exist <strong>And</strong>
+<code>SNOMED.Concept</code> has properties: ConceptId (string, unique
+indexed), Active (boolean), EffectiveTime, ModuleId, DefinitionStatusId
+<strong>And</strong> <code>SNOMED.Description</code> has properties:
+DescriptionId (string, unique indexed), ConceptId (indexed), Term
+(string, max 1024), TypeId, Active, LanguageCode <strong>And</strong>
+<code>SNOMED.Relationship</code> has properties: RelationshipId (string,
+unique indexed), SourceId (indexed), DestinationId (indexed), TypeId
+(indexed), Active <strong>And</strong> all
+ConceptId/SourceId/DestinationId fields are stored as strings (SCTIDs
+can be very large)</p>
+<h3 id="story-1.2-rf2-concept-and-description-loader">Story 1.2: RF2
+Concept and Description Loader</h3>
+<p>As a terminology administrator, I want to load SNOMED CT concept and
+description RF2 files into IRIS, So that the terminology is available
+for querying.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> valid RF2 concept file (tab-separated, header
+row) and description file exist on the filesystem <strong>When</strong>
+the loader method <code>SNOMED.Loader.LoadConcepts(filepath)</code> is
+called <strong>Then</strong> all rows are inserted into
+<code>SNOMED.Concept</code> via SQL prepared statements
+<strong>And</strong> processing is streamed line-by-line (no full
+dataset in memory) <strong>And</strong> progress is reported every
+50,000 records <strong>And</strong> the method returns
+<code>$$$OK</code> status on success</p>
+<p><strong>Given</strong> valid RF2 description file exists
+<strong>When</strong>
+<code>SNOMED.Loader.LoadDescriptions(filepath)</code> is called
+<strong>Then</strong> all rows are inserted into
+<code>SNOMED.Description</code> <strong>And</strong> the UK Monolith
+(831K+ concepts, ~1.5M descriptions) loads in under 60 seconds total</p>
+<p><strong>Given</strong> an invalid or missing filepath
+<strong>When</strong> the loader is called <strong>Then</strong> a
+meaningful error status is returned</p>
+<h3 id="story-1.3-rf2-relationship-loader">Story 1.3: RF2 Relationship
+Loader</h3>
+<p>As a terminology administrator, I want to load SNOMED CT relationship
+RF2 files into IRIS, So that hierarchical and associative relationships
+are available for querying.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> valid RF2 relationship file (tab-separated,
+header row) exists <strong>When</strong>
+<code>SNOMED.Loader.LoadRelationships(filepath)</code> is called
+<strong>Then</strong> all rows are inserted into
+<code>SNOMED.Relationship</code> <strong>And</strong> processing is
+streamed line-by-line <strong>And</strong> only active IS-A
+relationships (typeId = 116680003) are flagged for hierarchy use
+<strong>And</strong> progress is reported every 50,000 records</p>
+<p><strong>Given</strong> relationships reference concept IDs
+<strong>When</strong> querying <code>SNOMED.Relationship</code> by
+SourceId or DestinationId <strong>Then</strong> results are returned
+efficiently via indexed lookups</p>
+<hr />
+<h2 id="epic-2-terminology-search-navigation-1">Epic 2: Terminology
+Search &amp; Navigation</h2>
+<p>Users can find SNOMED concepts via full-text lexical search and
+navigate the hierarchy (ancestors, descendants, subsumption
+checking).</p>
+<h3 id="story-2.1-full-text-lexical-search">Story 2.1: Full-Text Lexical
+Search</h3>
+<p>As a terminology user, I want to search for SNOMED concepts by
+keyword or phrase across description terms, So that I can find relevant
+concepts without knowing their exact identifiers.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> SNOMED descriptions are loaded into
+<code>SNOMED.Description</code> <strong>When</strong> a text index is
+created on the Term property <strong>Then</strong> SQL queries using the
+text search capability return matching descriptions</p>
+<p><strong>Given</strong> a search term like “diabetes”
+<strong>When</strong> the search method
+<code>SNOMED.Search.Lexical(term)</code> is called <strong>Then</strong>
+all active descriptions containing the term are returned with ConceptId,
+Term, and TypeId <strong>And</strong> results are ordered by relevance
+<strong>And</strong> results include only active concepts (joined to
+SNOMED.Concept.Active = 1) <strong>And</strong> search performs
+efficiently against 1.5M+ descriptions</p>
+<h3 id="story-2.2-transitive-closure-computation">Story 2.2: Transitive
+Closure Computation</h3>
+<p>As a terminology administrator, I want to compute and store the
+transitive closure of SNOMED’s IS-A hierarchy, So that
+ancestor/descendant queries and subsumption checks are
+instantaneous.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> SNOMED relationships are loaded with active
+IS-A relationships (typeId = 116680003) <strong>When</strong>
+<code>SNOMED.TransitiveClosure.Compute()</code> is called
+<strong>Then</strong> the global
+<code>^SNOMED.TC(ancestorId, descendantId)</code> is populated for all
+transitive IS-A paths <strong>And</strong> the computation handles the
+full SNOMED hierarchy (~831K concepts) without running out of memory
+<strong>And</strong> a direct parent-child global
+<code>^SNOMED.Children(parentId, childId)</code> is also populated
+<strong>And</strong> progress is reported during computation</p>
+<p><strong>Given</strong> the transitive closure is computed
+<strong>When</strong> checking
+<code>$DATA(^SNOMED.TC("73211009", "46635009"))</code> (Diabetes
+mellitus -&gt; Type 1 diabetes) <strong>Then</strong> the result
+confirms the IS-A relationship exists (returns true)</p>
+<h3 id="story-2.3-hierarchy-navigation-methods">Story 2.3: Hierarchy
+Navigation Methods</h3>
+<p>As a terminology user, I want to query ancestors, descendants, and
+check subsumption for any SNOMED concept, So that I can navigate the
+terminology hierarchy programmatically.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> transitive closure is computed and stored in
+<code>^SNOMED.TC</code> <strong>When</strong>
+<code>SNOMED.Hierarchy.IsDescendantOf(conceptId, ancestorId)</code> is
+called <strong>Then</strong> it returns true/false in O(1) time via
+global lookup</p>
+<p><strong>Given</strong> a valid concept ID <strong>When</strong>
+<code>SNOMED.Hierarchy.GetAncestors(conceptId)</code> is called
+<strong>Then</strong> all ancestor concept IDs are returned as a JSON
+array</p>
+<p><strong>Given</strong> a valid concept ID <strong>When</strong>
+<code>SNOMED.Hierarchy.GetDescendants(conceptId)</code> is called
+<strong>Then</strong> all descendant concept IDs are returned as a JSON
+array</p>
+<p><strong>Given</strong> a valid concept ID <strong>When</strong>
+<code>SNOMED.Hierarchy.GetChildren(conceptId)</code> is called
+<strong>Then</strong> only direct children are returned (from
+<code>^SNOMED.Children</code> global)</p>
+<p><strong>Given</strong> a valid concept ID <strong>When</strong>
+<code>SNOMED.Hierarchy.GetParents(conceptId)</code> is called
+<strong>Then</strong> only direct parents are returned</p>
+<hr />
+<h2 id="epic-3-mcp-tool-exposure-1">Epic 3: MCP Tool Exposure</h2>
+<p>Claude Desktop/Code users can look up concepts, search terminology,
+and navigate the SNOMED hierarchy via natural language through MCP
+tools.</p>
+<h3 id="story-3.1-snomed-lookup-and-search-tools">Story 3.1: SNOMED
+Lookup and Search Tools</h3>
+<p>As a Claude Desktop/Code user, I want MCP tools that let me look up
+SNOMED concepts by ID and search by term, So that I can query
+terminology through natural language conversation.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> the <code>SNOMED.Tools.Lookup</code> class
+extends <code>%AI.Tool</code> <strong>When</strong> the tool
+<code>GetConcept(sctid)</code> is called with a valid SNOMED concept ID
+<strong>Then</strong> it returns JSON with concept details (ConceptId,
+FSN, Active, descriptions list)</p>
+<p><strong>Given</strong> the <code>SNOMED.Tools.Search</code> class
+extends <code>%AI.Tool</code> <strong>When</strong> the tool
+<code>LexicalSearch(term, maxResults)</code> is called
+<strong>Then</strong> it returns a JSON array of matching concepts with
+their preferred terms <strong>And</strong> results are limited to
+<code>maxResults</code> (default 20) <strong>And</strong> only active
+concepts are returned</p>
+<p><strong>Given</strong> a Query-as-Tool <code>SearchByPattern</code>
+is defined as a class query <strong>When</strong> the LLM invokes it
+with a SQL LIKE pattern <strong>Then</strong> matching concepts are
+returned in the standard <code>{rows, row_count, truncated}</code>
+envelope</p>
+<h3 id="story-3.2-snomed-hierarchy-tools">Story 3.2: SNOMED Hierarchy
+Tools</h3>
+<p>As a Claude Desktop/Code user, I want MCP tools for navigating the
+SNOMED hierarchy (ancestors, descendants, subsumption), So that I can
+explore clinical concept relationships through conversation.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> the <code>SNOMED.Tools.Hierarchy</code> class
+extends <code>%AI.Tool</code> <strong>When</strong>
+<code>IsA(conceptId, ancestorId)</code> is called <strong>Then</strong>
+it returns true/false indicating subsumption relationship</p>
+<p><strong>When</strong> <code>GetAncestors(conceptId)</code> is called
+<strong>Then</strong> it returns a JSON array of ancestor concepts with
+their preferred terms</p>
+<p><strong>When</strong>
+<code>GetDescendants(conceptId, maxResults)</code> is called
+<strong>Then</strong> it returns descendant concepts (limited to
+<code>maxResults</code>, default 100) with preferred terms</p>
+<p><strong>When</strong> <code>GetChildren(conceptId)</code> is called
+<strong>Then</strong> it returns only direct child concepts with
+preferred terms</p>
+<p><strong>When</strong> <code>GetParents(conceptId)</code> is called
+<strong>Then</strong> it returns only direct parent concepts with
+preferred terms</p>
+<h3 id="story-3.3-mcp-service-and-server-configuration">Story 3.3: MCP
+Service and Server Configuration</h3>
+<p>As a Claude Desktop/Code user, I want the SNOMED tools registered as
+an MCP service accessible via <code>iris-mcp-server</code>, So that I
+can use SNOMED tools directly from my AI assistant.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> <code>SNOMED.ToolSet</code> extends
+<code>%AI.ToolSet</code> with XData Definition including all tool
+classes <strong>When</strong> the ToolSet is compiled
+<strong>Then</strong> it composes Lookup, Search, and Hierarchy tools
+into a single discoverable set</p>
+<p><strong>Given</strong> <code>SNOMED.MCP.Service</code> extends
+<code>%AI.MCP.Service</code> with
+<code>Parameter SPECIFICATION = "SNOMED.ToolSet"</code>
+<strong>When</strong> registered as an MCP Server at path
+<code>/mcp/snomed</code> in Management Portal <strong>Then</strong>
+<code>iris-mcp-server</code> discovers and exposes all SNOMED tools to
+connected clients</p>
+<p><strong>Given</strong> a <code>config.toml</code> template with stdio
+transport pointing to <code>/mcp/snomed</code> <strong>When</strong>
+configured in Claude Desktop’s <code>claude_desktop_config.json</code>
+<strong>Then</strong> Claude Desktop shows the SNOMED tools as available
+<strong>And</strong> tool calls execute successfully and return
+results</p>
+<hr />
+<h2 id="epic-4-semantic-search-1">Epic 4: Semantic Search</h2>
+<p>Users can find SNOMED concepts by meaning (not just text match) using
+vector embeddings and similarity search, exposed as an MCP tool.</p>
+<h3 id="story-4.1-embedding-storage-and-vector-schema">Story 4.1:
+Embedding Storage and Vector Schema</h3>
+<p>As a developer, I want a persistent class with a VECTOR column to
+store concept description embeddings, So that semantic similarity search
+can be performed via SQL.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> the IRIS namespace is configured
+<strong>When</strong> <code>SNOMED.ConceptEmbedding</code> class is
+compiled <strong>Then</strong> a SQL table exists with ConceptId
+(string, indexed), Term (string), and Embedding (VECTOR(DOUBLE, 384))
+<strong>And</strong> an ANN index (HNSW) is defined on the Embedding
+column for efficient similarity search</p>
+<p><strong>Given</strong> the table exists <strong>When</strong> an
+embedding vector is inserted via SQL
+<code>INSERT INTO SNOMED.ConceptEmbedding (ConceptId, Term, Embedding) VALUES (?, ?, TO_VECTOR(?))</code>
+<strong>Then</strong> the vector is stored and queryable via
+<code>VECTOR_COSINE()</code> similarity function</p>
+<h3 id="story-4.2-embedding-generation-pipeline">Story 4.2: Embedding
+Generation Pipeline</h3>
+<p>As a terminology administrator, I want to generate vector embeddings
+for all active SNOMED concept descriptions using Ollama, So that the
+terminology is searchable by semantic meaning.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> Ollama is running with an embedding model
+(e.g., <code>all-minilm</code> or <code>nomic-embed-text</code>)
+<strong>When</strong>
+<code>SNOMED.Embeddings.Generate(modelName, batchSize)</code> is called
+<strong>Then</strong> embeddings are generated for all active Fully
+Specified Names <strong>And</strong> processing is batched (default
+batch size 100) to manage memory <strong>And</strong> progress is
+reported (count and percentage) <strong>And</strong> embeddings are
+inserted into <code>SNOMED.ConceptEmbedding</code> via SQL prepared
+statements <strong>And</strong> the process can be resumed (skips
+concepts that already have embeddings)</p>
+<p><strong>Given</strong> Ollama is unreachable or returns an error
+<strong>When</strong> the generation method is called
+<strong>Then</strong> a meaningful error is returned and partial
+progress is preserved</p>
+<h3 id="story-4.3-semantic-search-method-and-mcp-tool">Story 4.3:
+Semantic Search Method and MCP Tool</h3>
+<p>As a Claude Desktop/Code user, I want to search for SNOMED concepts
+by semantic meaning through an MCP tool, So that I can find relevant
+concepts even when I don’t know the exact clinical terminology.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> embeddings are stored in
+<code>SNOMED.ConceptEmbedding</code> <strong>When</strong>
+<code>SNOMED.Search.Semantic(query, maxResults)</code> is called with a
+natural language query <strong>Then</strong> the query is embedded via
+Ollama <strong>And</strong> <code>VECTOR_COSINE()</code> similarity
+search returns the top N matching concepts <strong>And</strong> results
+include ConceptId, Term, and similarity score <strong>And</strong> only
+results above a minimum threshold (default 0.5) are returned
+<strong>And</strong> search completes in under 1 second for 831K
+embeddings (via ANN index)</p>
+<p><strong>Given</strong> the <code>SNOMED.Tools.Semantic</code> class
+extends <code>%AI.Tool</code> <strong>When</strong> the tool
+<code>SemanticSearch(query, maxResults)</code> is registered in the
+ToolSet <strong>Then</strong> it is discoverable and callable via the
+MCP service <strong>And</strong> the ToolSet XData is updated to include
+the Semantic tool class</p>
+<hr />
+<h2 id="epic-5-packaging-distribution-1">Epic 5: Packaging &amp;
+Distribution</h2>
+<p>Teams can install the SNOMED tool via IPM or deploy as a Docker
+container with a single command.</p>
+<h3 id="story-5.1-ipm-package-structure">Story 5.1: IPM Package
+Structure</h3>
+<p>As a developer, I want the project structured as an IPM module with
+<code>module.xml</code>, So that it can be installed into any IRIS for
+Health instance via <code>zpm "install snomed-iris"</code>.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> the project has a <code>module.xml</code> at
+its root <strong>When</strong> IPM reads the module definition
+<strong>Then</strong> it identifies the package name
+(<code>snomed-iris</code>), version, description, and keywords
+<strong>And</strong> <code>SourcesRoot</code> points to the
+<code>src/</code> directory containing all <code>.cls</code> files
+<strong>And</strong> a <code>requirements.txt</code> is included listing
+Python dependencies (e.g., <code>requests</code>) <strong>And</strong>
+an installer class <code>SNOMED.Installer</code> is invoked during the
+Configure phase</p>
+<p><strong>Given</strong> the installer class is invoked
+<strong>When</strong> <code>SNOMED.Installer.Setup()</code> executes
+<strong>Then</strong> Python dependencies are installed via pip
+<strong>And</strong> the MCP Server application <code>/mcp/snomed</code>
+is registered programmatically <strong>And</strong> a success message
+confirms installation</p>
+<h3 id="story-5.2-docker-container-image">Story 5.2: Docker Container
+Image</h3>
+<p>As a DevOps engineer, I want a Dockerfile that builds a ready-to-run
+IRIS for Health container with SNOMED tools pre-installed, So that teams
+can deploy with <code>docker run</code> without manual setup.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> a <code>Dockerfile</code> based on
+<code>irishealth-community:2026.2.0AI</code> <strong>When</strong>
+<code>docker build</code> is executed <strong>Then</strong> the image
+installs the IPM package, compiles all classes, and configures the MCP
+server application <strong>And</strong> the <code>iris-mcp-server</code>
+binary and <code>config.toml</code> template are included
+<strong>And</strong> ports 1972 (SuperServer) and 52773 (Web Portal) are
+exposed</p>
+<p><strong>Given</strong> the built image <strong>When</strong>
+<code>docker run</code> is executed <strong>Then</strong> IRIS starts
+with the SNOMED namespace ready <strong>And</strong> the MCP server
+endpoint <code>/mcp/snomed</code> is accessible <strong>And</strong> a
+<code>docker-compose.yml</code> is provided showing Ollama sidecar
+configuration for embeddings</p>
+<h3 id="story-5.3-documentation-and-getting-started-guide">Story 5.3:
+Documentation and Getting Started Guide</h3>
+<p>As a new user, I want clear documentation on how to install, load
+data, and connect to Claude Desktop, So that I can get the SNOMED MCP
+tools working quickly.</p>
+<p><strong>Acceptance Criteria:</strong></p>
+<p><strong>Given</strong> a <code>README.md</code> exists in the project
+root <strong>When</strong> a user reads it <strong>Then</strong> it
+explains: prerequisites (IRIS 2026.2.0AI, Ollama optional), installation
+(IPM or Docker), RF2 data loading steps, MCP configuration for Claude
+Desktop/Code <strong>And</strong> includes a quick-start section with
+copy-paste commands <strong>And</strong> documents all available MCP
+tools with example queries</p>
+<p><strong>Given</strong> a <code>config/mcp-config.toml</code> template
+exists <strong>When</strong> a user copies it and adjusts
+host/credentials <strong>Then</strong> it works with
+<code>iris-mcp-server</code> out of the box for local development</p>
+</body>
+</html>

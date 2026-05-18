@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>4-2-embedding-generation-pipeline</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">4-2-embedding-generation-pipeline</h1>
+</header>
+<h1 id="story-4.2-embedding-generation-pipeline">Story 4.2: Embedding
+Generation Pipeline</h1>
+<p>Status: review</p>
+<h2 id="story">Story</h2>
+<p>As a terminology administrator, I want to generate vector embeddings
+for all active SNOMED concept descriptions using Ollama, so that the
+terminology is searchable by semantic meaning.</p>
+<h2 id="acceptance-criteria">Acceptance Criteria</h2>
+<ol type="1">
+<li><code>SNOMED.Embeddings.Generate(modelName, batchSize)</code>
+generates embeddings for all active Fully Specified Names</li>
+<li>Processing is batched (default batch size 100) to manage memory</li>
+<li>Progress is reported (count and percentage)</li>
+<li>Embeddings are inserted into <code>SNOMED.ConceptEmbedding</code>
+via SQL prepared statements</li>
+<li>The process can be resumed (skips concepts that already have
+embeddings)</li>
+<li>If Ollama is unreachable or returns an error, a meaningful error is
+returned and partial progress is preserved</li>
+</ol>
+<h2 id="tasks-subtasks">Tasks / Subtasks</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Task 1: Create
+<code>SNOMED.Embeddings</code> class with <code>Generate</code> method
+(AC: #1, #2, #3, #4, #5)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Create
+<code>src/SNOMED/Embeddings.cls</code> extending
+<code>%RegisteredObject</code></label></li>
+<li><label><input type="checkbox" checked="" />Implement
+<code>Generate(modelName, batchSize)</code> as Python class
+method</label></li>
+<li><label><input type="checkbox" checked="" />Query active FSN
+descriptions not yet in ConceptEmbedding (resume support)</label></li>
+<li><label><input type="checkbox" checked="" />Call Ollama
+<code>/api/embed</code> endpoint in batches</label></li>
+<li><label><input type="checkbox" checked="" />Insert embeddings via
+prepared SQL statement with
+<code>TO_VECTOR(?, DOUBLE)</code></label></li>
+<li><label><input type="checkbox" checked="" />Report progress every
+batch (count processed, percentage, rate)</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 2: Implement error
+handling and resilience (AC: #6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Handle Ollama connection
+errors with meaningful message</label></li>
+<li><label><input type="checkbox" checked="" />Handle Ollama API errors
+(bad model name, etc.)</label></li>
+<li><label><input type="checkbox" checked="" />Preserve partial progress
+on failure (already inserted embeddings remain)</label></li>
+<li><label><input type="checkbox" checked="" />Return error status with
+details on failure</label></li>
+</ul></li>
+<li><label><input type="checkbox" checked="" />Task 3: Test in Docker
+container (AC: #1-#6)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />Compile class and verify
+no errors</label></li>
+<li><label><input type="checkbox" checked="" />Test with Ollama running
+(if available) or verify logic with mock</label></li>
+<li><label><input type="checkbox" checked="" />Verify resume behavior
+(running twice doesn’t duplicate)</label></li>
+<li><label><input type="checkbox" checked="" />Verify error handling
+when Ollama is unreachable</label></li>
+</ul></li>
+</ul>
+<h2 id="dev-notes">Dev Notes</h2>
+<h3 id="architecture-pattern">Architecture Pattern</h3>
+<p>This story creates <code>SNOMED.Embeddings</code> — a utility class
+with a Python <code>Generate</code> method that orchestrates embedding
+generation. It follows the same pattern as <code>SNOMED.Loader</code>
+(Python class methods for bulk operations) and
+<code>SNOMED.TransitiveClosure</code> (long-running computation with
+progress reporting).</p>
+<p>The method: 1. Queries all active FSN descriptions NOT already
+embedded (resume support) 2. Batches them into groups of
+<code>batchSize</code> 3. Calls Ollama’s embedding API for each batch 4.
+Inserts results into <code>SNOMED.ConceptEmbedding</code></p>
+<h3 id="ollama-embedding-api">Ollama Embedding API</h3>
+<p>Ollama exposes an embedding endpoint at
+<code>http://localhost:11434/api/embed</code>:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.post(<span class="st">&quot;http://localhost:11434/api/embed&quot;</span>, json<span class="op">=</span>{</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;model&quot;</span>: <span class="st">&quot;all-minilm&quot;</span>,       <span class="co"># or &quot;nomic-embed-text&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;input&quot;</span>: [<span class="st">&quot;text1&quot;</span>, <span class="st">&quot;text2&quot;</span>, <span class="st">&quot;text3&quot;</span>]  <span class="co"># batch of texts</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> response.json()</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># data[&quot;embeddings&quot;] = [[0.1, 0.2, ...], [0.3, 0.4, ...], ...]</span></span></code></pre></div>
+<p>Key facts: - The <code>/api/embed</code> endpoint accepts a list of
+inputs (batch embedding) - Response:
+<code>{"embeddings": [[float, ...], ...]}</code> — one vector per input
+- Model <code>all-minilm</code> outputs 384 dimensions (matches our
+VECTOR column) - Model <code>nomic-embed-text</code> also outputs 384
+dimensions - Default Ollama port: 11434 - If Ollama is not running,
+<code>requests.post()</code> raises <code>ConnectionError</code></p>
+<h3 id="implementation-code-pattern">Implementation Code Pattern</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ClassMethod Generate(modelName As <span class="op">%</span>String <span class="op">=</span> <span class="st">&quot;all-minilm&quot;</span>, batchSize As <span class="op">%</span>Integer <span class="op">=</span> <span class="dv">100</span>, ollamaUrl As <span class="op">%</span>String <span class="op">=</span> <span class="st">&quot;http://localhost:11434&quot;</span>) As <span class="op">%</span>Status [ Language <span class="op">=</span> python ]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> iris</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> requests</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Find FSNs not yet embedded (resume support)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    find_sql <span class="op">=</span> iris.sql.prepare(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;SELECT d.ConceptId, d.Term &quot;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;FROM SNOMED.Description d &quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;JOIN SNOMED.Concept c ON c.ConceptId = d.ConceptId &quot;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;WHERE d.TypeId = &#39;900000000000003001&#39; &quot;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;AND d.Active = 1 AND c.Active = 1 &quot;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;AND d.ConceptId NOT IN (SELECT ConceptId FROM SNOMED.ConceptEmbedding)&quot;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    rs <span class="op">=</span> find_sql.execute()</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Collect all rows (can&#39;t iterate twice)</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    pending <span class="op">=</span> []</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> row <span class="kw">in</span> rs:</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        pending.append((row[<span class="dv">0</span>], row[<span class="dv">1</span>]))</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> <span class="bu">len</span>(pending)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> total <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">&quot;All concepts already have embeddings. Nothing to do.&quot;</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> iris.cls(<span class="st">&quot;%SYSTEM.Status&quot;</span>).OK()</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Generating embeddings for </span><span class="sc">{</span>total<span class="sc">}</span><span class="ss"> concepts using model &#39;</span><span class="sc">{</span>modelName<span class="sc">}</span><span class="ss">&#39;...&quot;</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Prepared insert statement</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    insert_sql <span class="op">=</span> iris.sql.prepare(</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;INSERT INTO SNOMED.ConceptEmbedding (ConceptId, Term, Embedding) &quot;</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;VALUES (?, ?, TO_VECTOR(?, DOUBLE))&quot;</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    embed_url <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>ollamaUrl<span class="sc">}</span><span class="ss">/api/embed&quot;</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    processed <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Process in batches</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, total, batchSize):</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>        batch <span class="op">=</span> pending[i:i <span class="op">+</span> batchSize]</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>        texts <span class="op">=</span> [term <span class="cf">for</span> _, term <span class="kw">in</span> batch]</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>            resp <span class="op">=</span> requests.post(embed_url, json<span class="op">=</span>{</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;model&quot;</span>: modelName,</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;input&quot;</span>: texts</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>            }, timeout<span class="op">=</span><span class="dv">120</span>)</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>            resp.raise_for_status()</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> requests.<span class="pp">ConnectionError</span>:</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>            msg <span class="op">=</span> <span class="ss">f&quot;Cannot connect to Ollama at </span><span class="sc">{</span>ollamaUrl<span class="sc">}</span><span class="ss">. Is Ollama running?&quot;</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&quot;ERROR: </span><span class="sc">{</span>msg<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&quot;  Progress preserved: </span><span class="sc">{</span>processed<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>total<span class="sc">}</span><span class="ss"> embeddings generated&quot;</span>)</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> iris.cls(<span class="st">&quot;%SYSTEM.Status&quot;</span>).Error(<span class="dv">5001</span>, msg)</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> requests.HTTPError <span class="im">as</span> e:</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>            msg <span class="op">=</span> <span class="ss">f&quot;Ollama API error: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&quot;ERROR: </span><span class="sc">{</span>msg<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&quot;  Progress preserved: </span><span class="sc">{</span>processed<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>total<span class="sc">}</span><span class="ss"> embeddings generated&quot;</span>)</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> iris.cls(<span class="st">&quot;%SYSTEM.Status&quot;</span>).Error(<span class="dv">5001</span>, msg)</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>        data <span class="op">=</span> resp.json()</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>        embeddings <span class="op">=</span> data.get(<span class="st">&quot;embeddings&quot;</span>, [])</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j, (concept_id, term) <span class="kw">in</span> <span class="bu">enumerate</span>(batch):</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> j <span class="op">&lt;</span> <span class="bu">len</span>(embeddings):</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>                vec_str <span class="op">=</span> <span class="st">&quot;,&quot;</span>.join(<span class="bu">str</span>(f) <span class="cf">for</span> f <span class="kw">in</span> embeddings[j])</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>                insert_sql.execute(concept_id, term, vec_str)</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>        processed <span class="op">+=</span> <span class="bu">len</span>(batch)</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>        pct <span class="op">=</span> (processed <span class="op">/</span> total) <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;  Processed </span><span class="sc">{</span>processed<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>total<span class="sc">}</span><span class="ss"> (</span><span class="sc">{</span>pct<span class="sc">:.1f}</span><span class="ss">%)&quot;</span>)</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Embedding generation complete: </span><span class="sc">{</span>processed<span class="sc">}</span><span class="ss"> concepts embedded&quot;</span>)</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> iris.cls(<span class="st">&quot;%SYSTEM.Status&quot;</span>).OK()</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="resume-support-design">Resume Support Design</h3>
+<p>The key to resume is the SQL <code>NOT IN</code> subquery:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> d.ConceptId <span class="kw">NOT</span> <span class="kw">IN</span> (<span class="kw">SELECT</span> ConceptId <span class="kw">FROM</span> SNOMED.ConceptEmbedding)</span></code></pre></div>
+<p>This means: - If the process fails halfway, already-inserted
+embeddings persist (no transactions to roll back) - Re-running
+<code>Generate()</code> only processes concepts that don’t yet have
+embeddings - This is safe because ConceptId has a unique index — no
+duplicates possible</p>
+<h3 id="python-dependencies">Python Dependencies</h3>
+<p>The method uses <code>requests</code> for HTTP calls to Ollama. Check
+if <code>requests</code> is available in the IRIS container:</p>
+<pre><code>docker exec iris-ai-hub python3 -c &quot;import requests; print(requests.__version__)&quot;</code></pre>
+<p>If not available, alternatives: 1. Use <code>urllib.request</code>
+(stdlib) — more verbose but no dependencies 2. Install via
+<code>pip</code> in the container</p>
+<p><strong>Preference: Use <code>urllib.request</code> as
+fallback</strong> if <code>requests</code> is not available, to avoid
+adding dependencies.</p>
+<h3 id="urllib.request-fallback-pattern">urllib.request Fallback
+Pattern</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> urllib.request</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> json.dumps({<span class="st">&quot;model&quot;</span>: modelName, <span class="st">&quot;input&quot;</span>: texts}).encode(<span class="st">&#39;utf-8&#39;</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>req <span class="op">=</span> urllib.request.Request(embed_url, data<span class="op">=</span>data, headers<span class="op">=</span>{<span class="st">&quot;Content-Type&quot;</span>: <span class="st">&quot;application/json&quot;</span>})</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> urllib.request.urlopen(req, timeout<span class="op">=</span><span class="dv">120</span>) <span class="im">as</span> resp:</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> json.loads(resp.read())</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> urllib.error.URLError <span class="im">as</span> e:</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Connection refused or timeout</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    msg <span class="op">=</span> <span class="ss">f&quot;Cannot connect to Ollama: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    ...</span></code></pre></div>
+<h3 id="critical-implementation-rules">Critical Implementation
+Rules</h3>
+<ul>
+<li><strong>Model default = “all-minilm”</strong> — 384 dimensions,
+matches VECTOR column</li>
+<li><strong>Batch size default = 100</strong> — balance between speed
+and memory</li>
+<li><strong>FSN TypeId = ‘900000000000003001’</strong> — only embed
+Fully Specified Names</li>
+<li><strong>Only active concepts/descriptions</strong> — filter on
+<code>Active = 1</code> for both</li>
+<li><strong>TO_VECTOR(?, DOUBLE)</strong> — the DOUBLE qualifier is
+REQUIRED (confirmed in Story 4.1)</li>
+<li><strong>Vector as comma-separated string</strong> — join floats with
+comma for <code>TO_VECTOR()</code></li>
+<li><strong>Progress reporting every batch</strong> — print count,
+total, percentage</li>
+<li><strong>Partial progress preserved</strong> — no transaction
+wrapping; each INSERT commits immediately</li>
+<li><strong>File location</strong>:
+<code>src/SNOMED/Embeddings.cls</code></li>
+<li><strong>Class extends <code>%RegisteredObject</code></strong> — not
+<code>%Persistent</code>; it’s a utility class</li>
+</ul>
+<h3 id="what-not-to-do">What NOT To Do</h3>
+<ul>
+<li>Do NOT use <code>sentence_transformers</code> or local model loading
+— use Ollama HTTP API</li>
+<li>Do NOT wrap the entire operation in a transaction — partial progress
+must persist</li>
+<li>Do NOT modify <code>SNOMED.ConceptEmbedding</code> class — it’s
+complete from Story 4.1</li>
+<li>Do NOT implement semantic search — that’s Story 4.3</li>
+<li>Do NOT hardcode Ollama URL — accept as parameter with default</li>
+<li>Do NOT embed Synonyms — only FSN (one embedding per concept)</li>
+<li>Do NOT assume <code>requests</code> is installed — check and
+fallback to <code>urllib</code></li>
+<li>Do NOT add a <code>Clear()</code> method that would delete all
+embeddings — too dangerous for accidental calls</li>
+</ul>
+<h3 id="testing-strategy">Testing Strategy</h3>
+<p>Since Ollama may not be running in the Docker container:</p>
+<ol type="1">
+<li><strong>Compile test</strong>: Verify class compiles without
+errors</li>
+<li><strong>Resume logic test</strong>: Insert a few fake embeddings,
+run Generate, verify it skips those</li>
+<li><strong>Connection error test</strong>: Call with bad URL, verify
+error message and status</li>
+<li><strong>If Ollama available</strong>: Test with 2-3 real concepts
+and verify embeddings stored</li>
+</ol>
+<p>For the resume test, pre-insert a test embedding:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>insert <span class="op">=</span> iris.sql.prepare(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;INSERT INTO SNOMED.ConceptEmbedding (ConceptId, Term, Embedding) &quot;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;VALUES (?, ?, TO_VECTOR(?, DOUBLE))&quot;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>fake_vec <span class="op">=</span> <span class="st">&quot;,&quot;</span>.join([<span class="st">&quot;0.1&quot;</span>] <span class="op">*</span> <span class="dv">384</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>insert.execute(<span class="st">&quot;TEST_ID&quot;</span>, <span class="st">&quot;Test term&quot;</span>, fake_vec)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Then run Generate — it should skip TEST_ID</span></span></code></pre></div>
+<h3 id="previous-story-intelligence">Previous Story Intelligence</h3>
+<p>From Story 4.1: - <code>SNOMED.ConceptEmbedding</code> has: ConceptId
+(unique indexed), Term, Embedding (VECTOR DOUBLE 384) - Insert syntax:
+<code>INSERT INTO SNOMED.ConceptEmbedding (ConceptId, Term, Embedding) VALUES (?, ?, TO_VECTOR(?, DOUBLE))</code>
+- The DOUBLE qualifier in TO_VECTOR is required - HNSW index:
+<code>As %SQL.Index.HNSW</code> - Table is accessible as
+<code>SNOMED.ConceptEmbedding</code> (schema.table) in SQL</p>
+<p>From Story 1.2 (Loader pattern): - Python class methods with
+<code>[ Language = python ]</code> -
+<code>iris.sql.prepare(sql).execute(params)</code> for parameterized SQL
+- Progress reporting every N records with <code>print()</code> - Return
+<code>iris.cls("%SYSTEM.Status").OK()</code> or
+<code>.Error(5001, msg)</code> - File validation with
+<code>os.path.isfile()</code> before processing</p>
+<p>From Story 2.2 (TransitiveClosure pattern): - Long-running
+computation with progress percentage -
+<code>iris.sql.prepare().execute()</code> returns iterable —
+<code>for row in rs:</code> with <code>row[0]</code>,
+<code>row[1]</code> - Cannot iterate result set twice — must collect to
+list first if needed</p>
+<h3 id="references">References</h3>
+<ul>
+<li>[Source: _bmad-output/planning-artifacts/epics.md#Story 4.2]</li>
+<li>[Source:
+_bmad-output/planning-artifacts/research/technical-iris-for-health-ai-hub-snomed-ct-port-research-2026-05-13.md
+— lines 352-370: Embedding Generation Strategy]</li>
+<li>[Source: src/SNOMED/Loader.cls — Python bulk operation pattern]</li>
+<li>[Source: src/SNOMED/ConceptEmbedding.cls — target table schema]</li>
+</ul>
+<h2 id="dev-agent-record">Dev Agent Record</h2>
+<h3 id="agent-model-used">Agent Model Used</h3>
+<p>Claude Opus 4.6</p>
+<h3 id="debug-log-references">Debug Log References</h3>
+<ul>
+<li><code>requests</code> 2.33.1 is available in the IRIS 2026.2.0AI
+container (no fallback to urllib needed)</li>
+<li><code>iris.sql.exec("DELETE ...")</code> throws SQLError when no
+rows match (SQLCODE 100) — use <code>try/except</code> or
+<code>iris.sql.prepare().execute()</code> with exception handling</li>
+<li><code>iris.sql.prepare("DELETE ...").execute()</code> also throws on
+empty table — same SQLCODE 100 behavior</li>
+<li>Ollama <code>/api/embed</code> accepts
+<code>{"model": "...", "input": ["text1", "text2"]}</code> and returns
+<code>{"embeddings": [[...], [...]]}</code></li>
+<li><code>requests.post</code> to port &gt;65535 throws
+<code>InvalidURL</code> (not <code>ConnectionError</code>) — must catch
+both</li>
+<li>Vector string format for TO_VECTOR: comma-separated floats as a
+single string parameter</li>
+</ul>
+<h3 id="completion-notes-list">Completion Notes List</h3>
+<ul>
+<li>Created <code>SNOMED.Embeddings</code> with
+<code>Generate(modelName, batchSize, ollamaUrl)</code> Python class
+method</li>
+<li>Resume support via
+<code>NOT IN (SELECT ConceptId FROM SNOMED.ConceptEmbedding)</code>
+subquery</li>
+<li>Batched processing with progress reporting (count/total/percentage
+per batch)</li>
+<li>Comprehensive error handling: ConnectionError, InvalidURL, Timeout,
+HTTPError, RequestException, mismatched embedding count</li>
+<li>Partial progress preserved on failure (no transaction wrapping)</li>
+<li>Verified: resume logic (1 pre-embedded, 3 remaining = correct),
+nothing-to-do path, connection error returns error status</li>
+</ul>
+<h3 id="file-list">File List</h3>
+<ul>
+<li>src/SNOMED/Embeddings.cls (NEW)</li>
+</ul>
+</body>
+</html>
