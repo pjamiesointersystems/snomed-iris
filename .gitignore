@@ -26,6 +26,9 @@ __pycache__/
 *.pyc
 .venv/
 
+# Docker image exports (too large for git)
+docker-images/
+
 # Archive (temporary — remove after verification)
 _archive/
 
